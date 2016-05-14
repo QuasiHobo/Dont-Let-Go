@@ -7,9 +7,11 @@ public class ObstacleController : MonoBehaviour {
 	public Renderer rend;
 	public List<Renderer> myRenderers = new List<Renderer>();
 	public float duration = 5.0f;
-	public Color startColor = Color.white;
-	public Color endColor = Color.black;
+	Color startColor = Color.white;
+	Color endColor = new Color32(49,47,47,1);
 	public float obstacleScore = 1f;
+
+	public GameObject distanceObject;
 
 	public bool gameOver = false;
 	float t = 0f;
@@ -20,6 +22,9 @@ public class ObstacleController : MonoBehaviour {
 		bool gameOver = false;
 		CharCollison.OnCollision += GameOver;
 		myRenderers.Add(this.gameObject.GetComponent<Renderer>());
+
+		distanceObject = GameObject.FindGameObjectWithTag ("DistanceTarget");
+
 		foreach (Transform child in transform) 
 		{
 			GameObject obj = child.gameObject;
@@ -42,13 +47,20 @@ public class ObstacleController : MonoBehaviour {
 		if (!gameOver) 
 		{
 			transform.Translate (Vector3.up * moveSpeed * Time.deltaTime, Space.World); 
+
+			float distance = distanceObject.transform.position.y - this.transform.position.y;
+
 			foreach (Renderer rend in myRenderers) 
 			{
 				rend.material.color = Color.Lerp (startColor, endColor, t);
 			}
-			if (t < 1) {
-				t += Time.deltaTime / duration;
+			if (t < 1) 
+			{
+				t += Time.deltaTime / Mathf.Clamp (distance, 1, 4);
 			}
+//			if (t < 1) {
+//				t += Time.deltaTime / duration;
+//			}
 		}
 
 		if (gameOver) 
