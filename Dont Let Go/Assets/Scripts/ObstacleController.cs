@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 public class ObstacleController : MonoBehaviour {
 
-	public float moveSpeed = 10f;
+	float moveSpeed;
 	public Renderer rend;
 	public List<Renderer> myRenderers = new List<Renderer>();
 	public float duration = 5.0f;
@@ -12,6 +12,7 @@ public class ObstacleController : MonoBehaviour {
 	public float obstacleScore = 1f;
 
 	public GameObject distanceObject;
+	float startDistance;
 
 	public bool gameOver = false;
 	float t = 0f;
@@ -22,9 +23,9 @@ public class ObstacleController : MonoBehaviour {
 		bool gameOver = false;
 		CharCollison.OnCollision += GameOver;
 		myRenderers.Add(this.gameObject.GetComponent<Renderer>());
-
+		moveSpeed = GameManager.Instance.gameSpeed;
 		distanceObject = GameObject.FindGameObjectWithTag ("DistanceTarget");
-
+		startDistance = this.transform.position.y - distanceObject.transform.position.y; 
 		foreach (Transform child in transform) 
 		{
 			GameObject obj = child.gameObject;
@@ -48,19 +49,19 @@ public class ObstacleController : MonoBehaviour {
 		{
 			transform.Translate (Vector3.up * moveSpeed * Time.deltaTime, Space.World); 
 
-			float distance = distanceObject.transform.position.y - this.transform.position.y;
+			float distance = this.transform.position.y - distanceObject.transform.position.y;
 
 			foreach (Renderer rend in myRenderers) 
 			{
 				rend.material.color = Color.Lerp (startColor, endColor, t);
 			}
+
 			if (t < 1) 
 			{
-				t += Time.deltaTime / Mathf.Clamp (distance, 1, 4);
+				t = 1- (distance / startDistance);
+				 
 			}
-//			if (t < 1) {
-//				t += Time.deltaTime / duration;
-//			}
+
 		}
 
 		if (gameOver) 

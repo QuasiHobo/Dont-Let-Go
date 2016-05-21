@@ -28,7 +28,7 @@ public class ScoreDetector : MonoBehaviour {
 				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore;
 				scoreText.gameObject.GetComponent<Animation> ().Play ();
 				scoreText.text = "" + totalScore;
-				Debug.Log ("SCORE!!!");
+//				Debug.Log ("SCORE!!!");
 
 				StartCoroutine ("DestroyObstacle", collider.gameObject);
 			}

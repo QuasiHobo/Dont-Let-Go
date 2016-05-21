@@ -19,10 +19,24 @@ public class CharController : MonoBehaviour {
 	public float hugDuration = 3.0f;
 
 	public Button hugButton;
+	public Renderer charRend;
+	public GameObject distanceObject;
+
+	float TransformDuration = 0.35f;
+
+	bool doingHug = false;
+
+	Color startColor;
 
 	// Use this for initialization
 	void Start () 
 	{
+		FallingEventScript.OnFallHit += CharCollided;
+		RotatorManager.OnHug += StartHug;
+		RotatorManager.OnStopHug += StopHug;
+
+		startColor = charRend.material.color;
+
 		hugButton.enabled = true;
 		FBBIK = this.gameObject.GetComponent<FullBodyBipedIK> ();
 
@@ -34,34 +48,67 @@ public class CharController : MonoBehaviour {
 		legController.transform.position = legPosDown.transform.position;
 	}
 
-	public void HugButtonPressed()
+	void OnDisable()
 	{
+		FallingEventScript.OnFallHit -= CharCollided;
+		RotatorManager.OnHug -= StartHug;
+		RotatorManager.OnStopHug -= StopHug;
+	}
+
+	void StartHug()
+	{
+		doingHug = true;
 		StartCoroutine ("Hug");
+	}
+	void StopHug ()
+	{
+		doingHug = false;
 	}
 
 	public IEnumerator Hug()
 	{
-		hugButton.enabled = false;
-		float duration = 0.5f;
-		float t = 0f;
-		while (t < 1) 
-		{
-			t += Time.deltaTime / duration;
-			legController.transform.position = Vector3.Lerp (legPosDown.transform.position, legPosUp.transform.position, t);
-			FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (startBodyWeight, hugBodyWeight, t);
-			yield return null;
-		}
+		yield return new WaitForSeconds (0.15f);
+		if (doingHug) {
+			hugButton.enabled = false;
+			float t = 0f;
+			while (t < 1) {
+				t += Time.deltaTime / TransformDuration;
+				legController.transform.position = Vector3.Lerp (legPosDown.transform.position, legPosUp.transform.position, t);
+				FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (startBodyWeight, hugBodyWeight, t);
+				yield return null;
+			}
 
-		yield return new WaitForSeconds (hugDuration);
-		t = 0f;
+			while (doingHug) {
+				yield return null;
+			}
+
+			t = 0f;
+			while (t < 1) {
+				t += Time.deltaTime / TransformDuration;
+				legController.transform.position = Vector3.Lerp (legPosUp.transform.position, legPosDown.transform.position, t);
+				FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (hugBodyWeight, startBodyWeight, t);
+				yield return null;
+			}
+			hugButton.enabled = true;
+		}
+	}
+
+	void CharCollided(string charNumbPass)
+	{
+		if(charNumbPass == charNumb)
+		StartCoroutine ("FadeCharColor");
+	}
+	IEnumerator FadeCharColor()
+	{
+		float t = 0;
+		float duration = 2.5f;
 		while (t < 1) 
 		{
 			t += Time.deltaTime / duration;
-			legController.transform.position = Vector3.Lerp (legPosUp.transform.position, legPosDown.transform.position, t);
-			FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (hugBodyWeight, startBodyWeight, t);
+			charRend.material.color = Color.Lerp(startColor, Color.white, t);
 			yield return null;
 		}
-		hugButton.enabled = true;
+		yield return null;
 	}
 
 	// Update is called once per frame

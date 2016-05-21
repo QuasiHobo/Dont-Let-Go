@@ -11,13 +11,18 @@ public class RagdollManager : MonoBehaviour {
 	public List<GameObject> listOfRb = new List<GameObject>();
 	public FullBodyBipedIK FBBIK;
 	public Animator myAnim;
-	// Use this for initialization
+
+	//Events
+	public delegate void OnRagdollEvent();
+	public static event OnRagdollEvent OnRagdoll;
+
 
 	void Start () 
 	{
 		CharCollison.OnCollision += EnableRagDolls;
 
-		FloorOBJ.gameObject.SetActive (false);
+//		FloorOBJ.gameObject.SetActive (false);
+
 		ParticleSystem.EmissionModule em = speedFake.emission;
 		em.enabled = true;
 
@@ -64,7 +69,7 @@ public class RagdollManager : MonoBehaviour {
 				go.GetComponent<Collider> ().isTrigger = false;
 				go.GetComponent<Collider> ().enabled = true;
 
-				float colStrength = 180f;
+				float colStrength = 110f;
 				if (charNumb == "Char1_fys")
 				go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
 				
@@ -79,18 +84,12 @@ public class RagdollManager : MonoBehaviour {
 				go.GetComponent<Collider> ().isTrigger = false;
 				go.GetComponent<Collider> ().enabled = true;
 
-				float colStrength = 180f; 
+				float colStrength = 110f; 
 				if (charNumb == "Char2_fys")
 				go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
 			}
 		}
-
-		StartCoroutine ("EnableFloor");
+			
 	}
-
-	IEnumerator EnableFloor()
-	{
-		yield return new WaitForSeconds (0.5f);
-		FloorOBJ.gameObject.SetActive (true);
-	}
+		
 }

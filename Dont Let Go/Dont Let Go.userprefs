@@ -1,18 +1,18 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CharController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameManager.cs">
     <Files>
-      <File FileName="Assets\Scripts\CharController.cs" Line="19" Column="30" />
-      <File FileName="Assets\Scripts\RagdollManager.cs" Line="12" Column="2" />
-      <File FileName="Assets\Scripts\ObstacleController.cs" Line="55" Column="51" />
-      <File FileName="Assets\Scripts\ObstacleManager.cs" Line="10" Column="38" />
+      <File FileName="Assets\Scripts\GameManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ObstacleController.cs" Line="9" Column="23" />
+      <File FileName="Assets\Scripts\CharController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\RagdollManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ObstacleManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\SwipeManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\RotatorManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CharCollison.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\HeartIconController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CameraShake.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ScoreDetector.cs" Line="3" Column="1" />
-      <File FileName="Assets\Scripts\GameManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ScoreDetector.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\FloorCollison.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\TargetFPS.cs" Line="1" Column="1" />
     </Files>

@@ -8,6 +8,7 @@ public class ObstacleManager : MonoBehaviour {
 	public GameObject obstacle_1;
 	public GameObject obstalce_Big_1;
 	public GameObject obstacle_Middle_1;
+	public GameObject obstacle_Big_Ring_1;
 
 	public bool spawning;
 	public GameObject midSpawn;
@@ -36,22 +37,23 @@ public class ObstacleManager : MonoBehaviour {
 	{
 		while (spawning) 
 		{
-			float tempWait = Random.Range (0.75f, 1.5f);
-			yield return new WaitForSeconds (tempWait);
+			yield return new WaitForSeconds (GameManager.Instance.spawnTime);
 			int tempIns = Random.Range (0, spawnPoints.Count);
 
-			int randomNr = Random.Range (0, 4);
+			int randomNr = Random.Range (0, 12);
 				
 				if (spawnPoints [tempIns].gameObject.tag == "MidSpawn") 
 				{
 				Instantiate (obstalce_Big_1, spawnPoints [tempIns].gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 				}
 
-			else if (randomNr == 1) 
+			else if (randomNr == 1 || randomNr == 2 || randomNr == 3) 
 			{
 				Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 			}
 
+			else if(randomNr == 4)
+				Instantiate (obstacle_Big_Ring_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 			else
 			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
 		}

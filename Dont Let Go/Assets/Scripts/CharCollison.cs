@@ -24,7 +24,7 @@ public class CharCollison : MonoBehaviour {
 			OnCollision (this.gameObject.tag); 
 			collider.gameObject.GetComponent<Rigidbody> ().isKinematic = false;
 			collider.gameObject.GetComponent<Rigidbody> ().useGravity = true;
-			Debug.Log ("RAMT!!!");
+//			Debug.Log ("RAMT!!!");
 		}
 	}
 }
