@@ -9,11 +9,16 @@ public class RotatorManager : MonoBehaviour {
 	Rigidbody myRB;
 	public bool leftMovePressed = false;
 	public bool rightMovePressed = false;
+	public bool doingHug = false;
 
 	public Renderer char1Heart;
 	public Renderer char2Heart;
 	Color heartStartColor;
 	public Color heartEndColor;
+
+	public Image hugbar;
+	public float hugDuration = 2f;
+	public float hugRegeneration = 5f;
 
 	public delegate void OnHugEvent();
 	public static event OnHugEvent OnHug;
@@ -21,17 +26,18 @@ public class RotatorManager : MonoBehaviour {
 	public delegate void OnStopHugEvent();
 	public static event OnStopHugEvent OnStopHug;
 
+
 	void Start () 
 	{
 		heartStartColor = char1Heart.material.color;
-		SwipeManager.OnSteeringSwipe += SwipeDetected;
 		myRB = this.GetComponent<Rigidbody> ();
 //		myRB.AddRelativeTorque (0, 1*500f, 0, ForceMode.Force);
+		hugbar.fillAmount = 1;
 	}
 
 	void OnDisable()
 	{
-		SwipeManager.OnSteeringSwipe -= SwipeDetected;
+
 	}
 
 	void Update()
@@ -49,46 +55,66 @@ public class RotatorManager : MonoBehaviour {
 		}
 		else
 			char2Heart.material.color = Color.Lerp (char2Heart.material.color, heartStartColor, Time.deltaTime*2f);
+
+		if (!doingHug && hugbar.fillAmount <= 1) {
+			hugbar.fillAmount += Time.deltaTime / hugRegeneration;
+		}
 	}
 
 	public void LeftButtonPressedUp()
 	{
 		leftMovePressed = false;
+		doingHug = false;
 		OnStopHug ();
 	}
 	public void RightButtonPressedUp()
 	{
 		rightMovePressed = false;
+		doingHug = false;
 		OnStopHug ();
 	}
 	public void LeftButtonPressedDown()
 	{
 		leftMovePressed = true;
-		if (leftMovePressed && rightMovePressed)
-			OnHug ();
+		if (leftMovePressed && rightMovePressed) 
+		{
+			if (hugbar.fillAmount > 0) {
+				doingHug = true;
+				OnHug ();
+				StartCoroutine ("HugBarController");
+			}
+		}
 	}
 	public void RightButtonPressedDown()
 	{
 		rightMovePressed = true;
-		if (leftMovePressed && rightMovePressed)
-			OnHug ();
+		if (leftMovePressed && rightMovePressed) 
+		{
+			if (hugbar.fillAmount > 0) {
+				doingHug = true;
+				OnHug ();
+				StartCoroutine ("HugBarController");
+			}
+		}
 	}
 
-	void SwipeDetected(float steeringInput, string swipeDirection, float swipeSpeed)
+	public IEnumerator HugBarController()
 	{
-//		if (swipeSpeed < -1.5f)
-//			swipeSpeed = -1.5f;
-//		if (swipeSpeed > 1.5f)
-//			swipeSpeed = 1.5f;
-//		if (swipeSpeed > -0.5f && swipeSpeed <= 0)
-//			swipeSpeed = -0.5f;
-//		if (swipeSpeed < 0.5f && swipeSpeed > 0)
-//			swipeSpeed = 0.5f;
+		while (doingHug) 
+		{
+			if (hugbar.fillAmount > 0) 
+			{
+				hugbar.fillAmount -= Time.deltaTime / hugDuration;
+			}
+			if (hugbar.fillAmount <= 0) 
+			{
+				doingHug = false;
+			}
+			yield return null;
+		}
 
-//		myRB.AddRelativeTorque (0, -swipeSpeed*95f, 0, ForceMode.Acceleration);
-
-//		myRB.AddRelativeTorque (0, -swipeSpeed*650f, 0, ForceMode.Force);
-//		Debug.Log ("Modtager: " + swipeSpeed);
+		OnStopHug ();
 	}
+		
 
 }

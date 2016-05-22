@@ -18,7 +18,6 @@ public class CharController : MonoBehaviour {
 	public float hugBodyWeight = 0.0f;
 	public float hugDuration = 3.0f;
 
-	public Button hugButton;
 	public Renderer charRend;
 	public GameObject distanceObject;
 
@@ -36,8 +35,6 @@ public class CharController : MonoBehaviour {
 		RotatorManager.OnStopHug += StopHug;
 
 		startColor = charRend.material.color;
-
-		hugButton.enabled = true;
 		FBBIK = this.gameObject.GetComponent<FullBodyBipedIK> ();
 
 		legController = this.transform.Find ("legRot").gameObject;
@@ -69,7 +66,6 @@ public class CharController : MonoBehaviour {
 	{
 		yield return new WaitForSeconds (0.15f);
 		if (doingHug) {
-			hugButton.enabled = false;
 			float t = 0f;
 			while (t < 1) {
 				t += Time.deltaTime / TransformDuration;
@@ -89,7 +85,6 @@ public class CharController : MonoBehaviour {
 				FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (hugBodyWeight, startBodyWeight, t);
 				yield return null;
 			}
-			hugButton.enabled = true;
 		}
 	}
 

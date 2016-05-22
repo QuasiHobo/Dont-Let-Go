@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour 
 {
@@ -35,9 +36,20 @@ public class GameManager : MonoBehaviour
 	float t_spawn = 0;
 	public float spawnTime;
 
+	bool gamePaused;
+	public Image pauseButton;
+	public Image playButton;
+
+	public Button restartButton;
+
 	// Use this for initialization
 	void Start () 
 	{
+		gamePaused = false;
+		pauseButton.enabled = true;
+		playButton.enabled = false;
+		restartButton.gameObject.SetActive (false);
+
 		CharCollison.OnCollision += GameOver;
 	}
 
@@ -65,9 +77,26 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator GameOverState()
 	{
-		yield return new WaitForSeconds (3f);
-		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
+		yield return new WaitForSeconds (1.5f);
+		restartButton.gameObject.SetActive (true);
 		yield return null;
 	}
 
+	public void RestartButtonPressed()
+	{
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
+	}
+
+	public void PauseGame()
+	{
+		if (Time.timeScale == 1) {
+			Time.timeScale = 0;
+			pauseButton.enabled = false;
+			playButton.enabled = true;
+		} else {
+			Time.timeScale = 1;
+			pauseButton.enabled = true;
+			playButton.enabled = false;
+		}
+	}
 }
