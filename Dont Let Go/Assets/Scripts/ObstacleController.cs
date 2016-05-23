@@ -68,6 +68,7 @@ public class ObstacleController : MonoBehaviour {
 		{
 			foreach (Renderer rend in myRenderers) 
 			{
+				rend.gameObject.GetComponent<Collider> ().enabled = false;
 				rend.material.color = Color.Lerp (rend.material.color, startColor, t);
 			}
 			if (t < 1) {

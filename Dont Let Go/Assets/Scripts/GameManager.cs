@@ -22,6 +22,9 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	float endScore;
+	float highScore;
+
 	public float startSpeed = 5;
 	public float endSpeed = 20;
 	public float endSpeedDuration = 60;
@@ -42,9 +45,17 @@ public class GameManager : MonoBehaviour
 
 	public Button restartButton;
 
+	public bool gameOver = false;
+
 	// Use this for initialization
 	void Start () 
 	{
+		//OBS!!! Deleting playerprefs for testing purposes
+		PlayerPrefs.DeleteAll();
+
+		highScore = PlayerPrefs.GetFloat ("Highscore");
+		Debug.Log ("highscore: " + highScore);
+
 		gamePaused = false;
 		pauseButton.enabled = true;
 		playButton.enabled = false;
@@ -77,6 +88,17 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator GameOverState()
 	{
+		endScore = ScoreDetector.Instance.totalScore;
+
+		if (endScore > highScore) 
+		{
+			PlayerPrefs.SetFloat ("Highscore", endScore);
+			highScore = PlayerPrefs.GetFloat ("Highscore");
+		}
+
+		Debug.Log ("SCORE: " + endScore);
+		Debug.Log ("Highscore: " + highScore);
+
 		yield return new WaitForSeconds (1.5f);
 		restartButton.gameObject.SetActive (true);
 		yield return null;

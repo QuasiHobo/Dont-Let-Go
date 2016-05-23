@@ -4,8 +4,24 @@ using UnityEngine.UI;
 
 public class ScoreDetector : MonoBehaviour {
 
+	// Singleton
+	private static ScoreDetector instance;
+	// Construct
+	private ScoreDetector ()
+	{
+	}
+	// Instance
+	public static ScoreDetector Instance {
+		get {
+			if (instance == null)
+				instance = GameObject.FindObjectOfType (typeof(ScoreDetector)) as ScoreDetector;
+
+			return instance;
+		}
+	}
+
 	public Text scoreText;
-	float totalScore;
+	public float totalScore;
 
 	// Use this for initialization
 	void Start () 
@@ -32,6 +48,10 @@ public class ScoreDetector : MonoBehaviour {
 
 				StartCoroutine ("DestroyObstacle", collider.gameObject);
 			}
+		}
+		if (collider.gameObject.tag == "Collectable") 
+		{
+			StartCoroutine ("DestroyObstacle", collider.gameObject);
 		}
 	}
 

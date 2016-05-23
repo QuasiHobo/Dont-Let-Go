@@ -24,7 +24,10 @@ public class CharCollison : MonoBehaviour {
 			OnCollision (this.gameObject.tag); 
 			collider.gameObject.GetComponent<Rigidbody> ().isKinematic = false;
 			collider.gameObject.GetComponent<Rigidbody> ().useGravity = true;
-//			Debug.Log ("RAMT!!!");
+		}
+		if (collider.tag == "Collectable") 
+		{
+			Debug.Log ("COLLECTED!!");
 		}
 	}
 }
