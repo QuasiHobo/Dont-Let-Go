@@ -6,7 +6,7 @@ public class ObstacleController : MonoBehaviour {
 	float moveSpeed;
 	public Renderer rend;
 	public List<Renderer> myRenderers = new List<Renderer>();
-	public float duration = 5.0f;
+	float duration = 5.0f;
 	Color startColor = Color.white;
 	Color endColor = new Color32(49,47,47,1);
 	public float obstacleScore = 1f;

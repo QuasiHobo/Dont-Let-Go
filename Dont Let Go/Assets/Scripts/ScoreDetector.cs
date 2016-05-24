@@ -23,16 +23,26 @@ public class ScoreDetector : MonoBehaviour {
 	public Text scoreText;
 	public float totalScore;
 
+	public float collectableValue = 1;
+
 	// Use this for initialization
 	void Start () 
 	{
+		CollectDetector.OnCollect += Collected;
+
 		totalScore = 0f;
 		scoreText.text = "" + totalScore;
 	}
+
+	void OnDisable()
+	{
+		CollectDetector.OnCollect -= Collected;
+	}
 	
-	// Update is called once per frame
-	void Update () {
-	
+	void Collected()
+	{
+		totalScore += collectableValue;
+		scoreText.text = "" + totalScore;
 	}
 
 	void OnTriggerEnter(Collider collider)

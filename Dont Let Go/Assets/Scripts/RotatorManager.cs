@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class RotatorManager : MonoBehaviour {
 		
+	public float touchSpeed = 15f;
+
 	Rigidbody myRB;
 	public bool leftMovePressed = false;
 	public bool rightMovePressed = false;
@@ -43,14 +45,14 @@ public class RotatorManager : MonoBehaviour {
 	void Update()
 	{
 		if (leftMovePressed) {
-			myRB.AddRelativeTorque (0, -1*12f, 0, ForceMode.Acceleration);
+			myRB.AddRelativeTorque (0, -1*touchSpeed, 0, ForceMode.Acceleration);
 
 			char1Heart.material.color = Color.Lerp (char1Heart.material.color, heartEndColor, Time.deltaTime*4f);
 		}
 		else
 			char1Heart.material.color = Color.Lerp (char1Heart.material.color, heartStartColor, Time.deltaTime*2f);
 		if (rightMovePressed) {
-			myRB.AddRelativeTorque (0, -(-1)*12f, 0, ForceMode.Acceleration);
+			myRB.AddRelativeTorque (0, -(-1)*touchSpeed, 0, ForceMode.Acceleration);
 			char2Heart.material.color = Color.Lerp (char2Heart.material.color, heartEndColor, Time.deltaTime*4f);
 		}
 		else

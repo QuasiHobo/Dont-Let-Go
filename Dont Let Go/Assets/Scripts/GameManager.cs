@@ -25,6 +25,10 @@ public class GameManager : MonoBehaviour
 	float endScore;
 	float highScore;
 
+	//Collectables
+	float amountCollected;
+	public Text amountCollected_text;
+
 	public float startSpeed = 5;
 	public float endSpeed = 20;
 	public float endSpeedDuration = 60;
@@ -47,6 +51,8 @@ public class GameManager : MonoBehaviour
 
 	public bool gameOver = false;
 
+	public int bonusLevelChance = 20;
+	public int bonusLevelSpawnAmount = 32;
 	// Use this for initialization
 	void Start () 
 	{
@@ -56,22 +62,33 @@ public class GameManager : MonoBehaviour
 		highScore = PlayerPrefs.GetFloat ("Highscore");
 		Debug.Log ("highscore: " + highScore);
 
+		//Handling collectables
+		amountCollected = 0;
+		amountCollected_text.text = "" + amountCollected;
+
 		gamePaused = false;
 		pauseButton.enabled = true;
 		playButton.enabled = false;
 		restartButton.gameObject.SetActive (false);
 
 		CharCollison.OnCollision += GameOver;
+		CollectDetector.OnCollect += Collected;
 	}
 
 	void OnDisable()
 	{
 		CharCollison.OnCollision -= GameOver; 
+		CollectDetector.OnCollect -= Collected;
 	}
 
 	void GameOver(string lol)
 	{
 		StartCoroutine ("GameOverState");
+	}
+	void Collected()
+	{
+		amountCollected += 1;
+		amountCollected_text.text = "" + amountCollected;
 	}
 
 	void Update () 

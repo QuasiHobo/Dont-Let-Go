@@ -8,13 +8,9 @@ public class CharCollison : MonoBehaviour {
 	public static event OnCollisionEvent OnCollision;
 
 	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+	void Start () 
+	{
+
 	}
 
 	void OnTriggerEnter (Collider collider)
@@ -24,10 +20,6 @@ public class CharCollison : MonoBehaviour {
 			OnCollision (this.gameObject.tag); 
 			collider.gameObject.GetComponent<Rigidbody> ().isKinematic = false;
 			collider.gameObject.GetComponent<Rigidbody> ().useGravity = true;
-		}
-		if (collider.tag == "Collectable") 
-		{
-			Debug.Log ("COLLECTED!!");
 		}
 	}
 }
