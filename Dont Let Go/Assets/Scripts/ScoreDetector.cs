@@ -25,6 +25,9 @@ public class ScoreDetector : MonoBehaviour {
 
 	public float collectableValue = 1;
 
+	public delegate void OnSeperateStopEvent();
+	public static event OnSeperateStopEvent OnSeperateStop;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -54,9 +57,22 @@ public class ScoreDetector : MonoBehaviour {
 				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore;
 				scoreText.gameObject.GetComponent<Animation> ().Play ();
 				scoreText.text = "" + totalScore;
-//				Debug.Log ("SCORE!!!");
 
 				StartCoroutine ("DestroyObstacle", collider.gameObject);
+			}
+		}
+		if (collider.gameObject.tag == "SeperationObstacle") 
+		{
+			if (collider.gameObject.GetComponent<ObstacleController> () != null) 
+			{
+				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore;
+				scoreText.gameObject.GetComponent<Animation> ().Play ();
+				scoreText.text = "" + totalScore;
+
+				if (collider.gameObject.GetComponent<ObstacleController> ().lastSpawn == true)
+					OnSeperateStop ();
+
+				Destroy (collider.gameObject);
 			}
 		}
 		if (collider.gameObject.tag == "Collectable") 

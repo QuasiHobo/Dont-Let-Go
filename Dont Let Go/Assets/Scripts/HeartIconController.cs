@@ -12,20 +12,9 @@ public class HeartIconController : MonoBehaviour {
 		CharCollison.OnCollision -= GameOver;
 	}
 
-	// Use this for initialization
-	void Start () 
-	{
-
-	}
-
 	void GameOver(string myChar)
 	{
 		this.gameObject.GetComponent<Animation> ().Stop ();
 	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-	
-	}
+
 }

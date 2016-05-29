@@ -37,8 +37,10 @@ public class CameraShake : MonoBehaviour {
 
 	void StopShake(string charNumb)
 	{
-		shakeAmount = 0.25f; 
-		decreaseFactor = 2.2f;
+		if (charNumb != "lol") {
+			shakeAmount = 0.25f; 
+			decreaseFactor = 2.2f;
+		}
 	}
 
 	void Update()

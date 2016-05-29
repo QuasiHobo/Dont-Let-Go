@@ -17,10 +17,13 @@ public class ObstacleController : MonoBehaviour {
 	public bool gameOver = false;
 	float t = 0f;
 
+	public bool lastSpawn = false;
+	public bool firstSpawn = false;
+
 	// Use this for initialization 
 	void Start () 
 	{
-		bool gameOver = false;
+		gameOver = false;
 		CharCollison.OnCollision += GameOver;
 		myRenderers.Add(this.gameObject.GetComponent<Renderer>());
 		moveSpeed = GameManager.Instance.gameSpeed;
@@ -90,5 +93,20 @@ public class ObstacleController : MonoBehaviour {
 	{
 		yield return new WaitForSeconds (1.5f);
 		Destroy (this.gameObject);
+	}
+	IEnumerator DoubleTapDestroyed()
+	{
+		t = 0;
+		gameOver = true;
+		Destroy (this.gameObject);
+		yield return null;
+	}
+
+	void OnTriggerEnter(Collider collider)
+	{
+		if (collider.gameObject.tag == "DoubleTapObject") 
+		{
+			StartCoroutine ("DoubleTapDestroyed");
+		}
 	}
 }

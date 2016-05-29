@@ -12,6 +12,8 @@ public class RagdollManager : MonoBehaviour {
 	public FullBodyBipedIK FBBIK;
 	public Animator myAnim;
 
+	public Rigidbody hips;
+
 	//Events
 	public delegate void OnRagdollEvent();
 	public static event OnRagdollEvent OnRagdoll;
@@ -20,8 +22,6 @@ public class RagdollManager : MonoBehaviour {
 	void Start () 
 	{
 		CharCollison.OnCollision += EnableRagDolls;
-
-//		FloorOBJ.gameObject.SetActive (false);
 
 		ParticleSystem.EmissionModule em = speedFake.emission;
 		em.enabled = true;
@@ -33,7 +33,6 @@ public class RagdollManager : MonoBehaviour {
 				go.GetComponent<Rigidbody> ().isKinematic = true;
 				go.GetComponent<Rigidbody> ().useGravity = false;
 				go.GetComponent<Collider> ().isTrigger = true;
-//				go.GetComponent<Collider> ().enabled = false;
 			}
 		}
 		if (this.gameObject.tag == "Char2") 
@@ -43,7 +42,6 @@ public class RagdollManager : MonoBehaviour {
 				go.GetComponent<Rigidbody> ().isKinematic = true;
 				go.GetComponent<Rigidbody> ().useGravity = false;
 				go.GetComponent<Collider> ().isTrigger = true;
-//				go.GetComponent<Collider> ().enabled = false;
 			}
 		}
 	}
@@ -63,6 +61,7 @@ public class RagdollManager : MonoBehaviour {
 		if (this.gameObject.tag == "Char1") 
 		{
 			listOfRb.AddRange (GameObject.FindGameObjectsWithTag ("Char1_fys"));
+
 			foreach (GameObject go in listOfRb) {
 				go.GetComponent<Rigidbody> ().isKinematic = false;
 				go.GetComponent<Rigidbody> ().useGravity = true;
@@ -71,13 +70,15 @@ public class RagdollManager : MonoBehaviour {
 
 				float colStrength = 110f;
 				if (charNumb == "Char1_fys")
-				go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
-				
+					go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
 			}
+			if(charNumb == "lol")
+				hips.GetComponent<Rigidbody> ().AddForce (transform.forward * -3333);
 		}
 		if (this.gameObject.tag == "Char2") 
 		{
 			listOfRb.AddRange (GameObject.FindGameObjectsWithTag ("Char2_fys"));
+
 			foreach (GameObject go in listOfRb) {
 				go.GetComponent<Rigidbody> ().isKinematic = false;
 				go.GetComponent<Rigidbody> ().useGravity = true;
@@ -86,8 +87,10 @@ public class RagdollManager : MonoBehaviour {
 
 				float colStrength = 110f; 
 				if (charNumb == "Char2_fys")
-				go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
+					go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
 			}
+			if(charNumb == "lol")
+				hips.GetComponent<Rigidbody> ().AddForce (transform.forward * -3333);
 		}
 			
 	}

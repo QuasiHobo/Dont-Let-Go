@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
 		amountCollected = 0;
 		amountCollected_text.text = "" + amountCollected;
 
+		gameOver = false;
 		gamePaused = false;
 		pauseButton.enabled = true;
 		playButton.enabled = false;
@@ -83,6 +84,7 @@ public class GameManager : MonoBehaviour
 
 	void GameOver(string lol)
 	{
+		gameOver = true;
 		StartCoroutine ("GameOverState");
 	}
 	void Collected()

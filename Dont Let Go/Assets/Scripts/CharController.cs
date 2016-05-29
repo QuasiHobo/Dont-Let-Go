@@ -69,7 +69,7 @@ public class CharController : MonoBehaviour {
 			float t = 0f;
 			while (t < 1) {
 				t += Time.deltaTime / TransformDuration;
-				legController.transform.position = Vector3.Lerp (legPosDown.transform.position, legPosUp.transform.position, t);
+				legController.transform.localPosition = Vector3.Lerp (legPosDown.transform.localPosition, legPosUp.transform.localPosition, t);
 				FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (startBodyWeight, hugBodyWeight, t);
 				yield return null;
 			}
@@ -81,7 +81,7 @@ public class CharController : MonoBehaviour {
 			t = 0f;
 			while (t < 1) {
 				t += Time.deltaTime / TransformDuration;
-				legController.transform.position = Vector3.Lerp (legPosUp.transform.position, legPosDown.transform.position, t);
+				legController.transform.localPosition = Vector3.Lerp (legPosUp.transform.localPosition, legPosDown.transform.localPosition, t);
 				FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (hugBodyWeight, startBodyWeight, t);
 				yield return null;
 			}
@@ -104,11 +104,5 @@ public class CharController : MonoBehaviour {
 			yield return null;
 		}
 		yield return null;
-	}
-
-	// Update is called once per frame
-	void Update () 
-	{
-	
 	}
 }
