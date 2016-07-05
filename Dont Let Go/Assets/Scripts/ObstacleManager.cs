@@ -31,6 +31,9 @@ public class ObstacleManager : MonoBehaviour {
 	public GameObject obstacle_Big_Ring_1;
 	public GameObject obstacle_Ring_Tunnel_1;
 	public GameObject obstacle_Big_2;
+	public GameObject obstacle_PikeBall_1;
+	public GameObject obstacle_PikeBall_2;
+	public GameObject obstacle_SinglePikeBall_1;
 
 	bool spawning;
 	public bool seperateOngoing;
@@ -53,6 +56,9 @@ public class ObstacleManager : MonoBehaviour {
 		obstacle_Big_Ring_1 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_Ring_1") as GameObject;
 		obstacle_Ring_Tunnel_1 = Resources.Load("Prefabs/Obstacles/Obstacle_Ring_Tunnel_1") as GameObject;
 		obstacle_Big_2 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_2") as GameObject;
+		obstacle_PikeBall_1 = Resources.Load("Prefabs/Obstacles/Obstacle_PikeBall_1") as GameObject;
+		obstacle_PikeBall_2 = Resources.Load("Prefabs/Obstacles/Obstacle_PikeBall_2") as GameObject;
+		obstacle_SinglePikeBall_1 = Resources.Load("Prefabs/Obstacles/Obstacle_SinglePikeBall_1") as GameObject;
 
 		CharCollison.OnCollision += GameOver;
 		CharCollison.OnCollision += StopSpawning;
@@ -184,8 +190,9 @@ public class ObstacleManager : MonoBehaviour {
 		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.15f)
 			Instantiate (obstacle_Big_Ring_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		else
-//			Instantiate (obstacle_Big_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
-			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
+//			Instantiate (obstacle_PikeBall_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			Instantiate (obstacle_SinglePikeBall_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
+//			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
 		yield return null;
 	}
 
