@@ -30,7 +30,7 @@ public class ObstacleManager : MonoBehaviour {
 	public GameObject obstacle_Middle_1;
 	public GameObject obstacle_Big_Ring_1;
 	public GameObject obstacle_Ring_Tunnel_1;
-	public GameObject obstacle_MidBall_1;
+	public GameObject obstacle_Big_2;
 
 	bool spawning;
 	public bool seperateOngoing;
@@ -52,7 +52,7 @@ public class ObstacleManager : MonoBehaviour {
 		obstacle_Middle_1 = Resources.Load("Prefabs/Obstacles/Obstacle_Middle_1") as GameObject;
 		obstacle_Big_Ring_1 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_Ring_1") as GameObject;
 		obstacle_Ring_Tunnel_1 = Resources.Load("Prefabs/Obstacles/Obstacle_Ring_Tunnel_1") as GameObject;
-		obstacle_MidBall_1 = Resources.Load("Prefabs/Obstacles/Obstacle_MidBall_1") as GameObject;
+		obstacle_Big_2 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_2") as GameObject;
 
 		CharCollison.OnCollision += GameOver;
 		CharCollison.OnCollision += StopSpawning;
@@ -131,12 +131,7 @@ public class ObstacleManager : MonoBehaviour {
 				if (spawnCheck != 1)
 				yield return new WaitForSeconds (GameManager.Instance.spawnTime);
 
-			int spawnKind = Random.Range (0, 3);
-			if (spawnKind == 1) {
-				seperateOngoing = true;
-				StartCoroutine ("SpawnSeperateLevel");
-			}
-			else
+//			int spawnKind = Random.Range (0, 3);
 			StartCoroutine ("SpawnNormalObstacle", spawnDirection);
 
 			while (seperateOngoing) 
@@ -146,28 +141,28 @@ public class ObstacleManager : MonoBehaviour {
 
 		}
 	}
-	IEnumerator SpawnSeperateLevel()
-	{
-		if (spawning) 
-		{
-			int spawnAmount = 0;
-			int spawnAmountMax = Random.Range (1, 5);
-			while (spawnAmount <= spawnAmountMax) 
-			{
-				float tempTime = GameManager.Instance.spawnTime;
-				GameObject tempOBJ =Instantiate (obstacle_MidBall_1, midSpawn.transform.position, midSpawn.transform.rotation) as GameObject;
-				spawnAmount += 1;
-				if (spawnAmount == spawnAmountMax)
-					tempOBJ.GetComponent<ObstacleController> ().lastSpawn = true;
-				if(spawnAmount == 1)
-					tempOBJ.GetComponent<ObstacleController> ().firstSpawn = true;
-				if(spawnAmount < spawnAmountMax)
-				yield return new WaitForSeconds (tempTime);
-			}
-			seperateOngoing = false;
-		}
-		yield return null;
-	}
+//	IEnumerator SpawnSeperateLevel()
+//	{
+//		if (spawning) 
+//		{
+//			int spawnAmount = 0;
+//			int spawnAmountMax = Random.Range (1, 5);
+//			while (spawnAmount <= spawnAmountMax) 
+//			{
+//				float tempTime = GameManager.Instance.spawnTime;
+//				GameObject tempOBJ =Instantiate (obstacle_MidBall_1, midSpawn.transform.position, midSpawn.transform.rotation) as GameObject;
+//				spawnAmount += 1;
+//				if (spawnAmount == spawnAmountMax)
+//					tempOBJ.GetComponent<ObstacleController> ().lastSpawn = true;
+//				if(spawnAmount == 1)
+//					tempOBJ.GetComponent<ObstacleController> ().firstSpawn = true;
+//				if(spawnAmount < spawnAmountMax)
+//				yield return new WaitForSeconds (tempTime);
+//			}
+//			seperateOngoing = false;
+//		}
+//		yield return null;
+//	}
 	IEnumerator SpawnNormalObstacle(int spawnDirection)
 	{
 		int tempIns = Random.Range (0, spawnPoints.Count);	
@@ -189,6 +184,7 @@ public class ObstacleManager : MonoBehaviour {
 		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.15f)
 			Instantiate (obstacle_Big_Ring_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		else
+//			Instantiate (obstacle_Big_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
 		yield return null;
 	}
