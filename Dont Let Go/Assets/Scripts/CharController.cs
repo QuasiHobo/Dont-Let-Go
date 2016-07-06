@@ -33,6 +33,7 @@ public class CharController : MonoBehaviour {
 		FallingEventScript.OnFallHit += CharCollided;
 		RotatorManager.OnHug += StartHug;
 		RotatorManager.OnStopHug += StopHug;
+		CollectDetector.OnCollectBoost += BoostHug;
 
 		startColor = charRend.material.color;
 		FBBIK = this.gameObject.GetComponent<FullBodyBipedIK> ();
@@ -50,6 +51,7 @@ public class CharController : MonoBehaviour {
 		FallingEventScript.OnFallHit -= CharCollided;
 		RotatorManager.OnHug -= StartHug;
 		RotatorManager.OnStopHug -= StopHug;
+		CollectDetector.OnCollectBoost -= BoostHug;
 	}
 
 	void StartHug()
@@ -61,7 +63,31 @@ public class CharController : MonoBehaviour {
 	{
 		doingHug = false;
 	}
+	void BoostHug()
+	{
+		StartCoroutine("StartBoostHug");
+	}
+	IEnumerator StartBoostHug()
+	{
+		float t = 0f;
+		while (t < 1) {
+			t += Time.deltaTime / 0.25f;
+			legController.transform.localPosition = Vector3.Lerp (legPosDown.transform.localPosition, legPosUp.transform.localPosition, t);
+			FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (startBodyWeight, hugBodyWeight, t);
+			yield return null;
+		}
+		while (GameManager.Instance.boostOngoing) {
+			yield return null;
+		}
 
+		t = 0f;
+		while (t < 1) {
+			t += Time.deltaTime / 0.25f;
+			legController.transform.localPosition = Vector3.Lerp (legPosUp.transform.localPosition, legPosDown.transform.localPosition, t);
+			FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (hugBodyWeight, startBodyWeight, t);
+			yield return null;
+		}
+	}
 	public IEnumerator Hug()
 	{
 		yield return new WaitForSeconds (0.15f);

@@ -21,11 +21,5 @@ public class CharCollison : MonoBehaviour {
 			collider.gameObject.GetComponent<Rigidbody> ().isKinematic = false;
 			collider.gameObject.GetComponent<Rigidbody> ().useGravity = true;
 		}
-		if (collider.tag == "SeperationObstacle") 
-		{
-			OnCollision (this.gameObject.tag); 
-			collider.gameObject.GetComponent<Rigidbody> ().isKinematic = false;
-			collider.gameObject.GetComponent<Rigidbody> ().useGravity = true;
-		}
 	}
 }

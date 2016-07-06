@@ -21,7 +21,8 @@ public class ObstacleManager : MonoBehaviour {
 		}
 	}
 
-	public GameObject collectables_1;
+	GameObject collectables_1;
+	GameObject collectable_Boost;
 
 	public List<GameObject> spawnPoints = new List<GameObject> ();
 	public GameObject obstacle_1;
@@ -34,9 +35,14 @@ public class ObstacleManager : MonoBehaviour {
 	public GameObject obstacle_PikeBall_1;
 	public GameObject obstacle_PikeBall_2;
 	public GameObject obstacle_SinglePikeBall_1;
+	public GameObject obstacle_VanillaRing_1;
+	public GameObject obstacle_Big_Rot_Fast_1;
+	public GameObject obstacle_Big_Rot_Fast_2;
+	public GameObject obstacle_Big_2_Rot_1;
+	public GameObject obstacle_Big_2_Rot_2;
 
 	bool spawning;
-	public bool seperateOngoing;
+	public bool doingBoost = false;
 
 	public GameObject midSpawn;
 
@@ -59,10 +65,18 @@ public class ObstacleManager : MonoBehaviour {
 		obstacle_PikeBall_1 = Resources.Load("Prefabs/Obstacles/Obstacle_PikeBall_1") as GameObject;
 		obstacle_PikeBall_2 = Resources.Load("Prefabs/Obstacles/Obstacle_PikeBall_2") as GameObject;
 		obstacle_SinglePikeBall_1 = Resources.Load("Prefabs/Obstacles/Obstacle_SinglePikeBall_1") as GameObject;
+		obstacle_VanillaRing_1 = Resources.Load("Prefabs/Obstacles/Obstacle_VanillaRing_1") as GameObject;
+		obstacle_Big_Rot_Fast_1 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_Rot_fast_1") as GameObject;
+		obstacle_Big_Rot_Fast_2 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_Rot_fast_2") as GameObject;
+		obstacle_Big_2_Rot_1 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_2_Rot_1") as GameObject;
+		obstacle_Big_2_Rot_2 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_2_Rot_2") as GameObject;
+
+		//Load collectable Objects
+		collectables_1 = Resources.Load("Prefabs/Collectables/Collectable_2") as GameObject;
+		collectable_Boost = Resources.Load("Prefabs/Collectables/Collectable_Boost_1") as GameObject;
 
 		CharCollison.OnCollision += GameOver;
 		CharCollison.OnCollision += StopSpawning;
-		seperateOngoing = false;
 		spawning = false;
 
 		foreach (Transform child in transform) 
@@ -92,11 +106,12 @@ public class ObstacleManager : MonoBehaviour {
 		{
 			startCheck += 1;
 			int spawnDirection = Random.Range (0, 2);
-			int spawnCheck = Random.Range (0, 3);
+			int spawnCheck = Random.Range (0, 4);
 
 			if (startCheck >= 2 && spawnCheck == 1) 
 			{
 				bool spawnCollectables = true;
+				bool boostSpawned = false;
 				float tempTime = GameManager.Instance.spawnTime;
 				int tempPoint = Random.Range (0, spawnPoints.Count);
 				int spawnAmount = 0;
@@ -107,7 +122,7 @@ public class ObstacleManager : MonoBehaviour {
 					maxSpawnAmount = GameManager.Instance.bonusLevelSpawnAmount;
 
 				yield return new WaitForSeconds (tempTime / 2f);
-				while (spawnCollectables) {
+				while (spawnCollectables && GameManager.Instance.gameOver == false && GameManager.Instance.boostOngoing == false) {
 
 					yield return new WaitForSeconds (tempTime / 7.5f);
 
@@ -120,13 +135,22 @@ public class ObstacleManager : MonoBehaviour {
 						tempPoint = 0;
 					if (tempPoint < 0 && spawnDirection == 1)
 						tempPoint = spawnPoints.Count-1;
-					
-					Instantiate (collectables_1, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
+
+					int specialSpawn = Random.Range(0, 5);
+					if(specialSpawn == 1 && boostSpawned == false && GameManager.Instance.boostOngoing == false)
+					{
+						Instantiate (collectable_Boost, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
+						boostSpawned = true;
+					}
+					else
+						Instantiate (collectables_1, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
 
 					spawnAmount += 1;
 
 					if (spawnAmount == maxSpawnAmount)
 						spawnCollectables = false;
+
+					yield return null;
 				}
 
 				yield return new WaitForSeconds (tempTime / 2f);
@@ -137,42 +161,47 @@ public class ObstacleManager : MonoBehaviour {
 				if (spawnCheck != 1)
 				yield return new WaitForSeconds (GameManager.Instance.spawnTime);
 
-//			int spawnKind = Random.Range (0, 3);
-			StartCoroutine ("SpawnNormalObstacle", spawnDirection);
-
-			while (seperateOngoing) 
-			{
-				yield return null;
-			}
-
+				if(GameManager.Instance.currentLvlNumb == 1)
+					StartCoroutine ("SpawnLevel_1", spawnDirection);
+				if(GameManager.Instance.currentLvlNumb == 2)
+					StartCoroutine ("SpawnLevel_2", spawnDirection);
+				if(GameManager.Instance.currentLvlNumb == 3)
+					StartCoroutine ("SpawnLevel_3", spawnDirection);
+				if(GameManager.Instance.currentLvlNumb == 4)
+					StartCoroutine ("SpawnLevel_3", spawnDirection);
+			
 		}
 	}
-//	IEnumerator SpawnSeperateLevel()
-//	{
-//		if (spawning) 
-//		{
-//			int spawnAmount = 0;
-//			int spawnAmountMax = Random.Range (1, 5);
-//			while (spawnAmount <= spawnAmountMax) 
-//			{
-//				float tempTime = GameManager.Instance.spawnTime;
-//				GameObject tempOBJ =Instantiate (obstacle_MidBall_1, midSpawn.transform.position, midSpawn.transform.rotation) as GameObject;
-//				spawnAmount += 1;
-//				if (spawnAmount == spawnAmountMax)
-//					tempOBJ.GetComponent<ObstacleController> ().lastSpawn = true;
-//				if(spawnAmount == 1)
-//					tempOBJ.GetComponent<ObstacleController> ().firstSpawn = true;
-//				if(spawnAmount < spawnAmountMax)
-//				yield return new WaitForSeconds (tempTime);
-//			}
-//			seperateOngoing = false;
-//		}
-//		yield return null;
-//	}
-	IEnumerator SpawnNormalObstacle(int spawnDirection)
+
+	IEnumerator SpawnLevel_1(int spawnDirection)
 	{
 		int tempIns = Random.Range (0, spawnPoints.Count);	
 		int randomNr = Random.Range (0, 13);
+
+		if (randomNr == 1 || randomNr == 2 || randomNr == 3 || randomNr == 4) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstalce_Big_Rot_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstalce_Big_Rot_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+
+		else if (randomNr == 5 || randomNr == 6 || randomNr == 7) 
+		{
+			Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+
+		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.10f)
+			Instantiate (obstacle_VanillaRing_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		else
+			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
+		yield return null;
+	}
+
+	IEnumerator SpawnLevel_2(int spawnDirection)
+	{
+		int tempIns = Random.Range (0, spawnPoints.Count);	
+		int randomNr = Random.Range (0, 14);
 
 		if (randomNr == 1 || randomNr == 2 || randomNr == 3 || randomNr == 4 || randomNr == 5) 
 		{
@@ -187,15 +216,118 @@ public class ObstacleManager : MonoBehaviour {
 			Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
 
-		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.15f)
-			Instantiate (obstacle_Big_Ring_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.10f)
+		{
+			Instantiate (obstacle_VanillaRing_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if(randomNr == 11)
+		{
+			Instantiate (obstacle_Big_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if (randomNr == 12) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
 		else
-//			Instantiate (obstacle_PikeBall_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
-			Instantiate (obstacle_SinglePikeBall_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
-//			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
+			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
 		yield return null;
 	}
+	IEnumerator SpawnLevel_3(int spawnDirection)
+	{
+		int tempIns = Random.Range (0, spawnPoints.Count);	
+		int randomNr = Random.Range (0, 15);
 
+		if (randomNr == 1 || randomNr == 2 || randomNr == 3) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstalce_Big_Rot_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstalce_Big_Rot_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if (randomNr == 4 || randomNr == 5) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if (randomNr == 6) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstacle_PikeBall_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstacle_PikeBall_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if (randomNr == 7) 
+		{
+			Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+
+		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.10f)
+		{
+			Instantiate (obstacle_Big_Ring_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if(randomNr == 11 || randomNr == 12)
+		{
+			Instantiate (obstacle_Big_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else
+			Instantiate (obstacle_SinglePikeBall_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
+		yield return null;
+	}
+	IEnumerator SpawnLevel_4(int spawnDirection)
+	{
+		int tempIns = Random.Range (0, spawnPoints.Count);	
+		int randomNr = Random.Range (0, 16);
+
+		if (randomNr == 1) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstalce_Big_Rot_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstalce_Big_Rot_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if (randomNr == 2 || randomNr == 3 || randomNr == 4 || randomNr == 5) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if (randomNr == 6 || randomNr == 7) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstacle_PikeBall_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstacle_PikeBall_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if (randomNr == 8) 
+		{
+			Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+
+		else if(randomNr == 9 || randomNr == 10 || randomNr == 11 && hugBar.fillAmount >= 0.10f)
+		{
+			Instantiate (obstacle_Big_Ring_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if(randomNr == 12)
+		{
+			Instantiate (obstacle_Big_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else if (randomNr == 13 || randomNr == 14) 
+		{
+			if(spawnDirection == 0)
+				Instantiate (obstacle_Big_2_Rot_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+			if(spawnDirection == 1)
+				Instantiate (obstacle_Big_2_Rot_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		}
+		else
+			Instantiate (obstacle_SinglePikeBall_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
+		yield return null;
+	}
 	void GameOver(string lol)
 	{
 		spawning = false;

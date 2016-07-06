@@ -50,7 +50,7 @@ public class ObstacleController : MonoBehaviour {
 	{
 		if (!gameOver) 
 		{
-			transform.Translate (Vector3.up * moveSpeed * Time.deltaTime, Space.World); 
+			transform.Translate (Vector3.up * GameManager.Instance.gameSpeed * Time.deltaTime, Space.World); 
 
 			float distance = this.transform.position.y - distanceObject.transform.position.y;
 

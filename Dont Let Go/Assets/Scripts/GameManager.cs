@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour
 	float amountCollected;
 	public Text amountCollected_text;
 
+	public int collectReward = 1;
+
 	public int currentLvlNumb;
 	//lvl 1
 	public float startSpeed = 5;
@@ -73,6 +75,11 @@ public class GameManager : MonoBehaviour
 
 	public int bonusLevelChance = 20;
 	public int bonusLevelSpawnAmount = 32;
+
+	//Special collectables
+	public bool boostOngoing = false;
+	public float boostTime = 5f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -95,6 +102,7 @@ public class GameManager : MonoBehaviour
 
 		CharCollison.OnCollision += GameOver;
 		CollectDetector.OnCollect += Collected;
+		CollectDetector.OnCollectBoost += BoostCollected;
 
 		StartCoroutine("GameProgression");
 	}
@@ -103,6 +111,7 @@ public class GameManager : MonoBehaviour
 	{
 		CharCollison.OnCollision -= GameOver; 
 		CollectDetector.OnCollect -= Collected;
+		CollectDetector.OnCollectBoost -= BoostCollected;
 	}
 
 	void GameOver(string lol)
@@ -112,8 +121,34 @@ public class GameManager : MonoBehaviour
 	}
 	void Collected()
 	{
-		amountCollected += 1;
+		amountCollected += collectReward;
 		amountCollected_text.text = "" + amountCollected;
+	}
+	void BoostCollected()
+	{
+		StartCoroutine("DoBoost");
+	}
+	IEnumerator DoBoost()
+	{
+		boostOngoing = true;
+		float tempGameSpeed;
+		float tempSpawnTime;
+		tempSpawnTime = spawnTime;
+		tempGameSpeed = gameSpeed;
+//		gameSpeed = 45f;
+//		spawnTime = 0.5f;
+		float t = 0;
+		while(t < 1)
+		{
+			t += Time.deltaTime / 0.8f;
+			gameSpeed = Mathf.Lerp (tempGameSpeed, 45, t);
+			spawnTime = Mathf.Lerp (tempSpawnTime, 0.5f, t);
+			yield return null;
+		}
+		yield return new WaitForSeconds(boostTime);
+		gameSpeed = tempGameSpeed;
+		spawnTime = tempSpawnTime;
+		boostOngoing = false;
 	}
 
 	IEnumerator GameProgression () 
@@ -122,10 +157,14 @@ public class GameManager : MonoBehaviour
 		{
 			while (t_speed < 1)
 				{
-					t_speed += Time.deltaTime / endSpeedDuration;
-					gameSpeed = Mathf.Lerp (startSpeed, endSpeed, t_speed);
-					spawnTime = Mathf.Lerp (startSpawnTime, endSpawnTime, t_speed);
-					yield return null;
+					if(!boostOngoing)
+					{
+						t_speed += Time.deltaTime / endSpeedDuration;
+						gameSpeed = Mathf.Lerp (startSpeed, endSpeed, t_speed);
+						spawnTime = Mathf.Lerp (startSpawnTime, endSpawnTime, t_speed);
+						yield return null;
+					}
+				yield return null;
 				}
 			t_speed = 0;
 			currentLvlNumb += 1;
@@ -137,10 +176,13 @@ public class GameManager : MonoBehaviour
 
 			while (t_speed < 1)
 			{
-				t_speed += Time.deltaTime / endSpeedDuration_2;
-				gameSpeed = Mathf.Lerp (startSpeed_2, endSpeed_2, t_speed);
-				spawnTime = Mathf.Lerp (startSpawnTime_2, endSpawnTime_2, t_speed);
-				yield return null;
+				if(!boostOngoing)
+				{
+					t_speed += Time.deltaTime / endSpeedDuration_2;
+					gameSpeed = Mathf.Lerp (startSpeed_2, endSpeed_2, t_speed);
+					spawnTime = Mathf.Lerp (startSpawnTime_2, endSpawnTime_2, t_speed);
+					yield return null;
+				}
 			}
 			t_speed = 0;
 			currentLvlNumb += 1;
@@ -152,10 +194,13 @@ public class GameManager : MonoBehaviour
 
 			while (t_speed < 1)
 			{
-				t_speed += Time.deltaTime / endSpeedDuration_3;
-				gameSpeed = Mathf.Lerp (startSpeed_3, endSpeed_3, t_speed);
-				spawnTime = Mathf.Lerp (startSpawnTime_3, endSpawnTime_3, t_speed);
-				yield return null;
+				if(!boostOngoing)
+				{
+					t_speed += Time.deltaTime / endSpeedDuration_3;
+					gameSpeed = Mathf.Lerp (startSpeed_3, endSpeed_3, t_speed);
+					spawnTime = Mathf.Lerp (startSpawnTime_3, endSpawnTime_3, t_speed);
+					yield return null;
+				}
 			}
 			t_speed = 0;
 			currentLvlNumb += 1;
@@ -167,10 +212,13 @@ public class GameManager : MonoBehaviour
 
 			while (t_speed < 1)
 			{
-				t_speed += Time.deltaTime / endSpeedDuration_4;
-				gameSpeed = Mathf.Lerp (startSpeed_4, endSpeed_4, t_speed);
-				spawnTime = Mathf.Lerp (startSpawnTime_4, endSpawnTime_4, t_speed);
-				yield return null;
+				if(!boostOngoing)
+				{
+					t_speed += Time.deltaTime / endSpeedDuration_4;
+					gameSpeed = Mathf.Lerp (startSpeed_4, endSpeed_4, t_speed);
+					spawnTime = Mathf.Lerp (startSpawnTime_4, endSpawnTime_4, t_speed);
+					yield return null;
+				}
 			}
 			t_speed = 0;
 			currentLvlNumb += 1;

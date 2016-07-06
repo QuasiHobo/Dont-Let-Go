@@ -23,7 +23,7 @@ public class ScoreDetector : MonoBehaviour {
 	public Text scoreText;
 	public float totalScore;
 
-	public float collectableValue = 1;
+	float collectableValue = 3;
 
 	public delegate void OnSeperateStopEvent();
 	public static event OnSeperateStopEvent OnSeperateStop;
@@ -32,6 +32,7 @@ public class ScoreDetector : MonoBehaviour {
 	void Start () 
 	{
 		CollectDetector.OnCollect += Collected;
+		CollectDetector.OnCollectBoost += BoostCollected;
 
 		totalScore = 0f;
 		scoreText.text = "" + totalScore;
@@ -47,7 +48,19 @@ public class ScoreDetector : MonoBehaviour {
 		totalScore += collectableValue;
 		scoreText.text = "" + totalScore;
 	}
-
+	void BoostCollected()
+	{
+		StartCoroutine("BoostScore");
+	}
+	IEnumerator BoostScore()
+	{
+		while(GameManager.Instance.boostOngoing)
+		{
+			totalScore += 2;
+			scoreText.text = "" + totalScore;
+			yield return new WaitForSeconds(0.05f);
+		}
+	}
 	void OnTriggerEnter(Collider collider)
 	{
 		if (collider.gameObject.tag == "Obstacle") 

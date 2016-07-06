@@ -51,7 +51,7 @@ public class CollectableController : MonoBehaviour {
 		if (!gameOver) 
 		{
 			// Moving the object
-			transform.Translate (Vector3.up * moveSpeed * Time.deltaTime, Space.World); 
+			transform.Translate (Vector3.up * GameManager.Instance.gameSpeed * Time.deltaTime, Space.World); 
 
 			float distance = this.transform.position.y - distanceObject.transform.position.y;
 
@@ -73,12 +73,14 @@ public class CollectableController : MonoBehaviour {
 				moveSpeed = 0;
 				float ta = suckSpeed* Time.deltaTime;
 				transform.position = Vector3.MoveTowards (transform.position, targetObj_1.transform.position, ta);
+				transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(0,0,0), ta);
 			}
 			if (char2Distance <= minDistChar) 
 			{
 				moveSpeed = 0;
 				float tb = suckSpeed* Time.deltaTime;
 				transform.position = Vector3.MoveTowards (transform.position, targetObj_2.transform.position, tb);
+				transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(0.2f,0.2f,0.2f), tb);
 			}
 
 

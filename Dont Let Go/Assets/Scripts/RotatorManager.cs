@@ -78,6 +78,16 @@ public class RotatorManager : MonoBehaviour {
 			if (!doingHug && hugbar.fillAmount <= 1) {
 				hugbar.fillAmount += Time.deltaTime / hugRegeneration;
 			}
+
+		//For testing on PC
+		if(Input.GetKeyDown(KeyCode.LeftArrow))
+			LeftButtonPressedDown();
+		if(Input.GetKeyDown(KeyCode.RightArrow))
+			RightButtonPressedDown();
+		if(Input.GetKeyUp(KeyCode.LeftArrow))
+			LeftButtonPressedUp();
+		if(Input.GetKeyUp(KeyCode.RightArrow))
+			RightButtonPressedUp();
 	}
 	void StartSeperation()
 	{
@@ -145,6 +155,8 @@ public class RotatorManager : MonoBehaviour {
 	}
 	public IEnumerator DoublePressController()
 	{
+		if(GameManager.Instance.boostOngoing == false)
+		{
 			doingHug = true;
 			OnHug ();
 			yield return new WaitForSeconds (0.1f);
@@ -159,4 +171,5 @@ public class RotatorManager : MonoBehaviour {
 			}
 			OnStopHug ();
 		}
+	}
 }
