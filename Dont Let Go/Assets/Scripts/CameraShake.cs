@@ -6,6 +6,7 @@ public class CameraShake : MonoBehaviour {
 	// Transform of the camera to shake. Grabs the gameObject's transform
 	// if null.
 	public Transform camTransform;
+	public Transform camBoostPos;
 
 	// How long the object should shake for.
 	public float shakeDuration = 0f;
@@ -16,9 +17,12 @@ public class CameraShake : MonoBehaviour {
 
 	Vector3 originalPos;
 
+	bool startshake = false;
+
 	void Awake()
 	{
 		CharCollison.OnCollision += StopShake;
+		CollectDetector.OnCollectBoost += Boost;
 
 		if (camTransform == null)
 		{
@@ -33,6 +37,7 @@ public class CameraShake : MonoBehaviour {
 	void OnDisable()
 	{
 		CharCollison.OnCollision -= StopShake;
+		CollectDetector.OnCollectBoost -= Boost;
 	}
 
 	void StopShake(string charNumb)
@@ -42,19 +47,41 @@ public class CameraShake : MonoBehaviour {
 			decreaseFactor = 2.2f;
 		}
 	}
-
+	void Boost()
+	{
+		StartCoroutine("WaitShake");
+	}
+	IEnumerator WaitShake()
+	{
+		yield return new WaitForSeconds(1f);
+		startshake = true;
+		yield return new WaitForSeconds(GameManager.Instance.boostTime);
+		startshake = false;
+	}
 	void Update()
 	{
-		if (shakeDuration > 0)
+		if(GameManager.Instance.boostOngoing == false)
 		{
-			camTransform.localPosition = originalPos + Random.insideUnitSphere * shakeAmount;
+			if (shakeDuration > 0)
+			{
+				camTransform.localPosition = originalPos + Random.insideUnitSphere * shakeAmount;
 
-			shakeDuration -= Time.deltaTime * decreaseFactor;
+				shakeDuration -= Time.deltaTime * decreaseFactor;
+			}
+			else
+			{
+				shakeDuration = 0f;
+				camTransform.localPosition = originalPos;
+			}
 		}
-		else
+		if(GameManager.Instance.boostOngoing == true && startshake)
 		{
-			shakeDuration = 0f;
-			camTransform.localPosition = originalPos;
+			if (shakeDuration > 0)
+			{
+				camTransform.localPosition = camBoostPos.localPosition + Random.insideUnitSphere * (shakeAmount*1.25f);
+
+				shakeDuration -= Time.deltaTime * decreaseFactor;
+			}
 		}
 	}
 }

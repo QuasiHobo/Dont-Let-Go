@@ -122,7 +122,7 @@ public class ObstacleManager : MonoBehaviour {
 					maxSpawnAmount = GameManager.Instance.bonusLevelSpawnAmount;
 
 				yield return new WaitForSeconds (tempTime / 2f);
-				while (spawnCollectables && GameManager.Instance.gameOver == false && GameManager.Instance.boostOngoing == false) {
+				while (spawnCollectables && GameManager.Instance.gameOver == false) {
 
 					yield return new WaitForSeconds (tempTime / 7.5f);
 
@@ -136,7 +136,7 @@ public class ObstacleManager : MonoBehaviour {
 					if (tempPoint < 0 && spawnDirection == 1)
 						tempPoint = spawnPoints.Count-1;
 
-					int specialSpawn = Random.Range(0, 5);
+					int specialSpawn = Random.Range(0, 35);
 					if(specialSpawn == 1 && boostSpawned == false && GameManager.Instance.boostOngoing == false)
 					{
 						Instantiate (collectable_Boost, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);

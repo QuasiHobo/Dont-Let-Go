@@ -64,6 +64,12 @@ public class CollectableController : MonoBehaviour {
 
 			}
 
+			if(GameManager.Instance.boostOngoing)
+			{
+				suckSpeed = 45f;
+				minDistChar = 2.5f;
+			}
+
 			//Distance to chars
 			float char1Distance = Vector3.Distance(this.transform.position, targetObj_1.transform.position);
 			float char2Distance = Vector3.Distance (this.transform.position, targetObj_2.transform.position);
@@ -80,7 +86,7 @@ public class CollectableController : MonoBehaviour {
 				moveSpeed = 0;
 				float tb = suckSpeed* Time.deltaTime;
 				transform.position = Vector3.MoveTowards (transform.position, targetObj_2.transform.position, tb);
-				transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(0.2f,0.2f,0.2f), tb);
+				transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(0.4f,0.4f,0.4f), tb);
 			}
 
 

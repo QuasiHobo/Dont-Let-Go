@@ -22,19 +22,6 @@ public class RotatorManager : MonoBehaviour {
 	public float hugDuration = 2f;
 	public float hugRegeneration = 5f;
 
-	//For seperation mechanic
-	public GameObject char1_object;
-	public GameObject char2_object;
-	public GameObject char1_startPos;
-	public GameObject char2_startPos;
-	public GameObject char1_endPos;
-	public GameObject char2_endPos;
-	public GameObject char1_startSepPos;
-	public GameObject char2_startSepPos;
-
-	public bool seperated;
-	//
-
 	int tapAmount = 0;
 
 	public delegate void OnHugEvent();
@@ -47,8 +34,7 @@ public class RotatorManager : MonoBehaviour {
 	void Start () 
 	{
 		//Events
-		ObstacleDetector.OnSeperate += StartSeperation;
-		ScoreDetector.OnSeperateStop += StopSeperation;
+		CollectDetector.OnCollectBoost += BoostStarted;
 
 		tapAmount = 0;
 		heartStartColor = char1Heart.material.color;
@@ -58,10 +44,12 @@ public class RotatorManager : MonoBehaviour {
 
 	void OnDisable()
 	{
-		ObstacleDetector.OnSeperate -= StartSeperation;
-		ScoreDetector.OnSeperateStop -= StopSeperation;
+		CollectDetector.OnCollectBoost -= BoostStarted;
 	}
-
+	void BoostStarted()
+	{
+		
+	}
 	void Update()
 	{
 			if (leftMovePressed) {
@@ -88,35 +76,6 @@ public class RotatorManager : MonoBehaviour {
 			LeftButtonPressedUp();
 		if(Input.GetKeyUp(KeyCode.RightArrow))
 			RightButtonPressedUp();
-	}
-	void StartSeperation()
-	{
-		StartCoroutine ("Seperate");
-	}
-	IEnumerator Seperate()
-	{
-		float t = 0;
-		while (t <= 1) {
-			t += Time.deltaTime * 1.5f;
-			char1_object.transform.position = Vector3.MoveTowards (char1_startPos.transform.position, char1_endPos.transform.position, t);
-			char2_object.transform.position = Vector3.MoveTowards (char2_startPos.transform.position, char2_endPos.transform.position, t);
-			yield return null;
-			}
-	}
-	IEnumerator SeperateStop()
-	{
-		float t = 0;
-		while (t <= 1) {
-			t += Time.deltaTime * 1.5f;
-			char1_object.transform.position = Vector3.MoveTowards (char1_object.transform.position, char1_startPos.transform.position, t);
-			char2_object.transform.position = Vector3.MoveTowards (char2_object.transform.position, char2_startPos.transform.position, t);
-			yield return null;
-		}
-	}
-		
-	void StopSeperation()
-	{
-		StartCoroutine ("SeperateStop");
 	}
 
 	public void LeftButtonPressedUp()
@@ -160,7 +119,7 @@ public class RotatorManager : MonoBehaviour {
 			doingHug = true;
 			OnHug ();
 			yield return new WaitForSeconds (0.1f);
-			while (doingHug) {
+			while (doingHug && GameManager.Instance.boostOngoing == false) {
 				if (hugbar.fillAmount > 0) {
 					hugbar.fillAmount -= Time.deltaTime / hugDuration;
 				}

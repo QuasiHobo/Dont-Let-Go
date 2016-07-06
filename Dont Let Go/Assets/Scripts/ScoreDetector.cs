@@ -25,8 +25,8 @@ public class ScoreDetector : MonoBehaviour {
 
 	float collectableValue = 3;
 
-	public delegate void OnSeperateStopEvent();
-	public static event OnSeperateStopEvent OnSeperateStop;
+	public delegate void OnCollidedEvent();
+	public static event OnCollidedEvent OnCollided;
 
 	// Use this for initialization
 	void Start () 
@@ -41,6 +41,7 @@ public class ScoreDetector : MonoBehaviour {
 	void OnDisable()
 	{
 		CollectDetector.OnCollect -= Collected;
+		CollectDetector.OnCollectBoost -= BoostCollected;
 	}
 	
 	void Collected()
@@ -56,9 +57,10 @@ public class ScoreDetector : MonoBehaviour {
 	{
 		while(GameManager.Instance.boostOngoing)
 		{
-			totalScore += 2;
+			totalScore += 1;
 			scoreText.text = "" + totalScore;
 			yield return new WaitForSeconds(0.05f);
+			yield return null;
 		}
 	}
 	void OnTriggerEnter(Collider collider)
@@ -67,6 +69,7 @@ public class ScoreDetector : MonoBehaviour {
 		{
 			if (collider.gameObject.GetComponent<ObstacleController> () != null) 
 			{
+				OnCollided();
 				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore;
 				scoreText.gameObject.GetComponent<Animation> ().Play ();
 				scoreText.text = "" + totalScore;
@@ -74,21 +77,12 @@ public class ScoreDetector : MonoBehaviour {
 				StartCoroutine ("DestroyObstacle", collider.gameObject);
 			}
 		}
-		if (collider.gameObject.tag == "SeperationObstacle") 
-		{
-			if (collider.gameObject.GetComponent<ObstacleController> () != null) 
-			{
-				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore;
-				scoreText.gameObject.GetComponent<Animation> ().Play ();
-				scoreText.text = "" + totalScore;
 
-				if (collider.gameObject.GetComponent<ObstacleController> ().lastSpawn == true)
-					OnSeperateStop ();
-
-				Destroy (collider.gameObject);
-			}
-		}
 		if (collider.gameObject.tag == "Collectable") 
+		{
+			StartCoroutine ("DestroyObstacle", collider.gameObject);
+		}
+		if (collider.gameObject.tag == "Collectable_Boost") 
 		{
 			StartCoroutine ("DestroyObstacle", collider.gameObject);
 		}

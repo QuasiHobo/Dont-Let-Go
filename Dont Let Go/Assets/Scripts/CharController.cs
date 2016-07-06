@@ -72,10 +72,11 @@ public class CharController : MonoBehaviour {
 		float t = 0f;
 		while (t < 1) {
 			t += Time.deltaTime / 0.25f;
-			legController.transform.localPosition = Vector3.Lerp (legPosDown.transform.localPosition, legPosUp.transform.localPosition, t);
+			legController.transform.localPosition = Vector3.Lerp (legController.transform.localPosition, legPosUp.transform.localPosition, t);
 			FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (startBodyWeight, hugBodyWeight, t);
 			yield return null;
 		}
+
 		while (GameManager.Instance.boostOngoing) {
 			yield return null;
 		}
@@ -87,11 +88,12 @@ public class CharController : MonoBehaviour {
 			FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (hugBodyWeight, startBodyWeight, t);
 			yield return null;
 		}
+		yield return null;
 	}
 	public IEnumerator Hug()
 	{
 		yield return new WaitForSeconds (0.15f);
-		if (doingHug) {
+		if (doingHug && GameManager.Instance.boostOngoing == false) {
 			float t = 0f;
 			while (t < 1) {
 				t += Time.deltaTime / TransformDuration;
@@ -100,12 +102,12 @@ public class CharController : MonoBehaviour {
 				yield return null;
 			}
 
-			while (doingHug) {
+			while (doingHug && GameManager.Instance.boostOngoing == false) {
 				yield return null;
 			}
 
 			t = 0f;
-			while (t < 1) {
+			while (t < 1 && GameManager.Instance.boostOngoing == false) {
 				t += Time.deltaTime / TransformDuration;
 				legController.transform.localPosition = Vector3.Lerp (legPosUp.transform.localPosition, legPosDown.transform.localPosition, t);
 				FBBIK.solver.bodyEffector.positionWeight = Mathf.Lerp (hugBodyWeight, startBodyWeight, t);

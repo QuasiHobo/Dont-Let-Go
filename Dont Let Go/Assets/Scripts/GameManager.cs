@@ -79,6 +79,13 @@ public class GameManager : MonoBehaviour
 	//Special collectables
 	public bool boostOngoing = false;
 	public float boostTime = 5f;
+	public Camera mainCam;
+	public Transform camStart;
+	public Transform camEnd;
+	float camFOVstart = 65f;
+	float camFOVend = 110f;
+	bool endBoost = false;
+	bool waitForCollide = false;
 
 	// Use this for initialization
 	void Start () 
@@ -103,6 +110,7 @@ public class GameManager : MonoBehaviour
 		CharCollison.OnCollision += GameOver;
 		CollectDetector.OnCollect += Collected;
 		CollectDetector.OnCollectBoost += BoostCollected;
+		ScoreDetector.OnCollided += AfterBoostCollided;
 
 		StartCoroutine("GameProgression");
 	}
@@ -113,7 +121,12 @@ public class GameManager : MonoBehaviour
 		CollectDetector.OnCollect -= Collected;
 		CollectDetector.OnCollectBoost -= BoostCollected;
 	}
-
+	void AfterBoostCollided()
+	{
+		endBoost = false;
+		if(waitForCollide)
+		endBoost = true;
+	}
 	void GameOver(string lol)
 	{
 		gameOver = true;
@@ -135,20 +148,44 @@ public class GameManager : MonoBehaviour
 		float tempSpawnTime;
 		tempSpawnTime = spawnTime;
 		tempGameSpeed = gameSpeed;
-//		gameSpeed = 45f;
-//		spawnTime = 0.5f;
 		float t = 0;
+		float camPos = 0;
+
 		while(t < 1)
 		{
-			t += Time.deltaTime / 0.8f;
-			gameSpeed = Mathf.Lerp (tempGameSpeed, 45, t);
-			spawnTime = Mathf.Lerp (tempSpawnTime, 0.5f, t);
+			t += Time.deltaTime / 1f;
+			gameSpeed = Mathf.Lerp (tempGameSpeed, 40, t);
+			spawnTime = Mathf.Lerp (tempSpawnTime, 0.4f, t);
+			camPos = Mathf.Lerp(camStart.position.y, camEnd.position.y, t);
+			mainCam.transform.position = new Vector3(0, camPos, 0);
+			mainCam.fieldOfView = Mathf.Lerp(camFOVstart, camFOVend, t);
 			yield return null;
 		}
+
+		t = 0f;
 		yield return new WaitForSeconds(boostTime);
+		waitForCollide = true;
+		while(endBoost == false)
+		{
+			yield return null;
+		}
+
+		while(t < 1)
+		{
+			t += Time.deltaTime / 0.25f;
+			gameSpeed = Mathf.Lerp (gameSpeed, tempGameSpeed, t);
+			spawnTime = Mathf.Lerp (spawnTime, tempSpawnTime, t);
+			camPos = Mathf.Lerp(camEnd.position.y, camStart.position.y, t);
+			mainCam.transform.position = new Vector3(0, camPos, 0);
+			mainCam.fieldOfView = Mathf.Lerp(camFOVend, camFOVstart, t);
+			yield return null;
+		}
+			
 		gameSpeed = tempGameSpeed;
 		spawnTime = tempSpawnTime;
 		boostOngoing = false;
+		waitForCollide = false;
+		endBoost = false;
 	}
 
 	IEnumerator GameProgression () 

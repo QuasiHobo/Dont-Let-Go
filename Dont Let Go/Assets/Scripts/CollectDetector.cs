@@ -23,9 +23,9 @@ public class CollectDetector : MonoBehaviour {
 		}
 		if(collider.tag == "Collectable_Boost")
 		{
-			Debug.Log("Boost collected!");
 			Destroy (collider.gameObject);
-			OnCollectBoost();
+				if(GameManager.Instance.boostOngoing == false)
+				OnCollectBoost();
 		}
 	}
 }
