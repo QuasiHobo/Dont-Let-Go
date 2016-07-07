@@ -79,14 +79,14 @@ public class CollectableController : MonoBehaviour {
 				moveSpeed = 0;
 				float ta = suckSpeed* Time.deltaTime;
 				transform.position = Vector3.MoveTowards (transform.position, targetObj_1.transform.position, ta);
-				transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(0,0,0), ta);
+				transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(0f,0f,0f), ta);
 			}
 			if (char2Distance <= minDistChar) 
 			{
 				moveSpeed = 0;
 				float tb = suckSpeed* Time.deltaTime;
 				transform.position = Vector3.MoveTowards (transform.position, targetObj_2.transform.position, tb);
-				transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(0.4f,0.4f,0.4f), tb);
+				transform.localScale = Vector3.MoveTowards(transform.localScale, new Vector3(0f,0f,0f), tb);
 			}
 
 

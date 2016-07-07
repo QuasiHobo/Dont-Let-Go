@@ -62,10 +62,8 @@ public class GameManager : MonoBehaviour
 	float t_speed = 0;
 	public float gameSpeed;
 
-	float t_spawn = 0;
 	public float spawnTime;
 
-	bool gamePaused;
 	public Image pauseButton;
 	public Image playButton;
 
@@ -102,7 +100,6 @@ public class GameManager : MonoBehaviour
 
 		currentLvlNumb = 1;
 		gameOver = false;
-		gamePaused = false;
 		pauseButton.enabled = true;
 		playButton.enabled = false;
 		restartButton.gameObject.SetActive (false);
@@ -155,7 +152,7 @@ public class GameManager : MonoBehaviour
 		{
 			t += Time.deltaTime / 1f;
 			gameSpeed = Mathf.Lerp (tempGameSpeed, 40, t);
-			spawnTime = Mathf.Lerp (tempSpawnTime, 0.4f, t);
+			spawnTime = Mathf.Lerp (tempSpawnTime, 0.5f, t);
 			camPos = Mathf.Lerp(camStart.position.y, camEnd.position.y, t);
 			mainCam.transform.position = new Vector3(0, camPos, 0);
 			mainCam.fieldOfView = Mathf.Lerp(camFOVstart, camFOVend, t);
@@ -220,6 +217,7 @@ public class GameManager : MonoBehaviour
 					spawnTime = Mathf.Lerp (startSpawnTime_2, endSpawnTime_2, t_speed);
 					yield return null;
 				}
+				yield return null;
 			}
 			t_speed = 0;
 			currentLvlNumb += 1;
@@ -238,6 +236,7 @@ public class GameManager : MonoBehaviour
 					spawnTime = Mathf.Lerp (startSpawnTime_3, endSpawnTime_3, t_speed);
 					yield return null;
 				}
+				yield return null;
 			}
 			t_speed = 0;
 			currentLvlNumb += 1;
@@ -256,6 +255,7 @@ public class GameManager : MonoBehaviour
 					spawnTime = Mathf.Lerp (startSpawnTime_4, endSpawnTime_4, t_speed);
 					yield return null;
 				}
+				yield return null;
 			}
 			t_speed = 0;
 			currentLvlNumb += 1;
