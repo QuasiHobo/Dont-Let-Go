@@ -24,6 +24,7 @@ public class ScoreDetector : MonoBehaviour {
 	public float totalScore;
 
 	float collectableValue = 3;
+	float collectableBigValue = 25;
 
 	public delegate void OnCollidedEvent();
 	public static event OnCollidedEvent OnCollided;
@@ -33,6 +34,7 @@ public class ScoreDetector : MonoBehaviour {
 	{
 		CollectDetector.OnCollect += Collected;
 		CollectDetector.OnCollectBoost += BoostCollected;
+		CollectDetector.OnCollectBig += BigCollected;
 
 		totalScore = 0f;
 		scoreText.text = "" + totalScore;
@@ -42,6 +44,7 @@ public class ScoreDetector : MonoBehaviour {
 	{
 		CollectDetector.OnCollect -= Collected;
 		CollectDetector.OnCollectBoost -= BoostCollected;
+		CollectDetector.OnCollectBig -= BigCollected;
 	}
 	
 	void Collected()
@@ -52,6 +55,11 @@ public class ScoreDetector : MonoBehaviour {
 	void BoostCollected()
 	{
 		StartCoroutine("BoostScore");
+	}
+	void BigCollected()
+	{
+		totalScore += collectableBigValue;
+		scoreText.text = "" + totalScore;
 	}
 	IEnumerator BoostScore()
 	{

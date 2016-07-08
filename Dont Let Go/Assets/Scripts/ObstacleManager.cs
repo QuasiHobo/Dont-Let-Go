@@ -22,6 +22,7 @@ public class ObstacleManager : MonoBehaviour {
 	}
 
 	GameObject collectables_1;
+	GameObject collectable_Big;
 	GameObject collectable_Boost;
 
 	public List<GameObject> spawnPoints = new List<GameObject> ();
@@ -73,6 +74,7 @@ public class ObstacleManager : MonoBehaviour {
 
 		//Load collectable Objects
 		collectables_1 = Resources.Load("Prefabs/Collectables/Collectable_2") as GameObject;
+		collectable_Big = Resources.Load("Prefabs/Collectables/Collectable_Big") as GameObject;
 		collectable_Boost = Resources.Load("Prefabs/Collectables/Collectable_Boost_1") as GameObject;
 
 		CharCollison.OnCollision += GameOver;
@@ -115,7 +117,7 @@ public class ObstacleManager : MonoBehaviour {
 				float tempTime = GameManager.Instance.spawnTime;
 				int tempPoint = Random.Range (0, spawnPoints.Count);
 				int spawnAmount = 0;
-				int maxSpawnAmount = Random.Range (6, 16);
+				int maxSpawnAmount = Random.Range (8, 18);
 
 				int chanceForBonusLevel = Random.Range (0, GameManager.Instance.bonusLevelChance);
 				if (chanceForBonusLevel == 1)
@@ -124,7 +126,7 @@ public class ObstacleManager : MonoBehaviour {
 				yield return new WaitForSeconds (tempTime / 2f);
 				while (spawnCollectables && GameManager.Instance.gameOver == false && GameManager.Instance.boostOngoing == false) {
 
-					yield return new WaitForSeconds (tempTime / 7.5f);
+					yield return new WaitForSeconds (tempTime / 8.5f);
 
 					if(spawnDirection == 0)
 						tempPoint += 1;
@@ -136,11 +138,15 @@ public class ObstacleManager : MonoBehaviour {
 					if (tempPoint < 0 && spawnDirection == 1)
 						tempPoint = spawnPoints.Count-1;
 
-					int specialSpawn = Random.Range(0, 55);
+					int specialSpawn = Random.Range(0, 62);
 					if(specialSpawn == 1 && boostSpawned == false && GameManager.Instance.boostOngoing == false)
 					{
 						Instantiate (collectable_Boost, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
 						boostSpawned = true;
+					}
+					else if(specialSpawn == 2 || specialSpawn == 3)
+					{
+						Instantiate (collectable_Big, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
 					}
 					else
 						Instantiate (collectables_1, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
@@ -161,6 +167,8 @@ public class ObstacleManager : MonoBehaviour {
 //				if (spawnCheck != 1)
 				yield return new WaitForSeconds (GameManager.Instance.spawnTime);
 
+			if(GameManager.Instance.gameOver == false)
+			{
 				if(GameManager.Instance.currentLvlNumb == 1)
 					StartCoroutine ("SpawnLevel_1", spawnDirection);
 				if(GameManager.Instance.currentLvlNumb == 2)
@@ -169,7 +177,7 @@ public class ObstacleManager : MonoBehaviour {
 					StartCoroutine ("SpawnLevel_3", spawnDirection);
 				if(GameManager.Instance.currentLvlNumb == 4)
 					StartCoroutine ("SpawnLevel_3", spawnDirection);
-			
+			}
 		}
 	}
 
@@ -195,6 +203,7 @@ public class ObstacleManager : MonoBehaviour {
 			Instantiate (obstacle_VanillaRing_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		else
 			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
+
 		yield return null;
 	}
 

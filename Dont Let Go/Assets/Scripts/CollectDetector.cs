@@ -9,6 +9,9 @@ public class CollectDetector : MonoBehaviour {
 	public delegate void OnCollectBoostCollisionEvent();
 	public static event OnCollectBoostCollisionEvent OnCollectBoost;
 
+	public delegate void OnCollectBigCollisionEvent();
+	public static event OnCollectBigCollisionEvent OnCollectBig;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -26,6 +29,11 @@ public class CollectDetector : MonoBehaviour {
 			Destroy (collider.gameObject);
 				if(GameManager.Instance.boostOngoing == false)
 				OnCollectBoost();
+		}
+		if(collider.tag == "Collectable_Big")
+		{
+			Destroy (collider.gameObject);
+			OnCollectBig ();
 		}
 	}
 }

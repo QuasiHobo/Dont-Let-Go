@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
 	public Text amountCollected_text;
 
 	public int collectReward = 1;
+	public int collectReward_Big = 10;
 
 	public int currentLvlNumb;
 	//lvl 1
@@ -85,6 +86,15 @@ public class GameManager : MonoBehaviour
 	bool endBoost = false;
 	bool waitForCollide = false;
 
+	//Particle Systems
+	public ParticleSystem speedFaking;
+	public ParticleSystem speedFaking_2;
+	float speedFakeWait = 0f;
+	float speedFakeRate;
+	float speedFakeStart = 1f;
+	float speedFakeEnd = 85f;
+	float speedFakeRateDuration = 600f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -93,6 +103,12 @@ public class GameManager : MonoBehaviour
 
 		highScore = PlayerPrefs.GetFloat ("Highscore");
 		Debug.Log ("highscore: " + highScore);
+
+		//Handling particle systems
+		ParticleSystem.EmissionModule em = speedFaking.emission;
+		em.enabled = true;
+		ParticleSystem.EmissionModule em_2 = speedFaking_2.emission;
+		em_2.enabled = true;
 
 		//Handling collectables
 		amountCollected = 0;
@@ -107,6 +123,7 @@ public class GameManager : MonoBehaviour
 		CharCollison.OnCollision += GameOver;
 		CollectDetector.OnCollect += Collected;
 		CollectDetector.OnCollectBoost += BoostCollected;
+		CollectDetector.OnCollectBig += BigCollected;
 		ScoreDetector.OnCollided += AfterBoostCollided;
 
 		StartCoroutine("GameProgression");
@@ -117,6 +134,8 @@ public class GameManager : MonoBehaviour
 		CharCollison.OnCollision -= GameOver; 
 		CollectDetector.OnCollect -= Collected;
 		CollectDetector.OnCollectBoost -= BoostCollected;
+		CollectDetector.OnCollectBig -= BigCollected;
+		ScoreDetector.OnCollided -= AfterBoostCollided;
 	}
 	void AfterBoostCollided()
 	{
@@ -132,6 +151,12 @@ public class GameManager : MonoBehaviour
 	void Collected()
 	{
 		amountCollected += collectReward;
+		amountCollected_text.text = "" + amountCollected;
+	}
+	void BigCollected()
+	{
+		amountCollected += collectReward_Big;
+		amountCollected_text.gameObject.GetComponent<Animation>().Play();
 		amountCollected_text.text = "" + amountCollected;
 	}
 	void BoostCollected()
@@ -152,7 +177,7 @@ public class GameManager : MonoBehaviour
 		{
 			t += Time.deltaTime / 1f;
 			gameSpeed = Mathf.Lerp (tempGameSpeed, 40, t);
-			spawnTime = Mathf.Lerp (tempSpawnTime, 0.5f, t);
+			spawnTime = Mathf.Lerp (tempSpawnTime, 0.35f, t);
 			camPos = Mathf.Lerp(camStart.position.y, camEnd.position.y, t);
 			mainCam.transform.position = new Vector3(0, camPos, 0);
 			mainCam.fieldOfView = Mathf.Lerp(camFOVstart, camFOVend, t);
@@ -160,8 +185,20 @@ public class GameManager : MonoBehaviour
 		}
 
 		t = 0f;
-		yield return new WaitForSeconds(boostTime);
+		yield return new WaitForSeconds(boostTime/2);
+
+		while(t < 1)
+		{
+			t += Time.deltaTime / (boostTime/2);
+			spawnTime = Mathf.Lerp (0.35f, 1.5f, t);
+			yield return null;
+		}
+
+		Debug.Log("BoostTime done!!");
+
+		t = 0f;
 		waitForCollide = true;
+
 		while(endBoost == false)
 		{
 			yield return null;
@@ -263,9 +300,39 @@ public class GameManager : MonoBehaviour
 
 	}
 
+	void Update()
+	{
+		if(!gameOver)
+		{
+			if(speedFakeWait < 1)
+			{
+				speedFakeWait += Time.deltaTime / speedFakeRateDuration;
+
+				var em = speedFaking_2.emission;
+				var rate = em.rate;
+				rate.mode = ParticleSystemCurveMode.Constant;
+
+				speedFakeRate = Mathf.Lerp(speedFakeStart, speedFakeEnd, speedFakeWait);
+				rate.constantMin = speedFakeRate;
+				rate.constantMax = speedFakeRate;
+
+				em.rate = rate;
+			}
+
+			speedFaking.gravityModifier = -(gameSpeed);
+			speedFaking_2.gravityModifier = -(gameSpeed);
+//			speedFaking_2.emission.rate = 
+		}
+	}
+
 	IEnumerator GameOverState()
 	{
 		endScore = ScoreDetector.Instance.totalScore;
+
+		ParticleSystem.EmissionModule em = speedFaking.emission;
+		em.enabled = false;
+		ParticleSystem.EmissionModule em_2 = speedFaking_2.emission;
+		em_2.enabled = false;
 
 		if (endScore > highScore) 
 		{

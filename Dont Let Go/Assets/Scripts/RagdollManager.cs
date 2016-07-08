@@ -6,7 +6,6 @@ using RootMotion.FinalIK;
 public class RagdollManager : MonoBehaviour {
 
 	public GameObject FloorOBJ;
-	public ParticleSystem speedFake;
 
 	public List<GameObject> listOfRb = new List<GameObject>();
 	public FullBodyBipedIK FBBIK;
@@ -22,9 +21,6 @@ public class RagdollManager : MonoBehaviour {
 	void Start () 
 	{
 		CharCollison.OnCollision += EnableRagDolls;
-
-		ParticleSystem.EmissionModule em = speedFake.emission;
-		em.enabled = true;
 
 		if (this.gameObject.tag == "Char1") 
 		{
@@ -56,8 +52,6 @@ public class RagdollManager : MonoBehaviour {
 		FBBIK.enabled = false;
 		myAnim.enabled = false;
 
-		ParticleSystem.EmissionModule em = speedFake.emission;
-		em.enabled = false;
 		if (this.gameObject.tag == "Char1") 
 		{
 			listOfRb.AddRange (GameObject.FindGameObjectsWithTag ("Char1_fys"));
