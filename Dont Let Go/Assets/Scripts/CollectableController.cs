@@ -10,6 +10,8 @@ public class CollectableController : MonoBehaviour {
 	Color startColor = Color.white;
 	public Color endColor = new Color32(193,60,60,1);
 
+	Camera mainCam;
+
 	public GameObject distanceObject;
 	float startDistance;
 	float duration = 5.0f;
@@ -24,6 +26,10 @@ public class CollectableController : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
+		mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+		startColor = mainCam.backgroundColor;
+		this.gameObject.GetComponent<Renderer>().material.color = mainCam.backgroundColor;
+
 		gameOver = false;
 		CharCollison.OnCollision += GameOver;
 

@@ -42,15 +42,33 @@ public class ObstacleManager : MonoBehaviour {
 	public GameObject obstacle_Big_2_Rot_1;
 	public GameObject obstacle_Big_2_Rot_2;
 
+	//Particle effects
+	public ParticleSystem speedFake_2;
+	public ParticleSystem specialEffect_1;
+
 	bool spawning;
 	public bool doingBoost = false;
+
+	//For special lvls
+	Camera mainCam;
+	public bool spawningSpecial = false;
+	Color normalColor;
+	public Color specialColor_1;
+	float specialSpawnInterval = 0.8f;
 
 	public GameObject midSpawn;
 
 	//For checking fillamount
 	public Image hugBar;
 
-	int startCheck = 0;
+	public int startCheck = 0;
+
+	//Events
+	public delegate void OnSpecialStartEvent();
+	public static event OnSpecialStartEvent OnSpecialStart;
+
+	public delegate void OnSpecialStopEvent();
+	public static event OnSpecialStopEvent OnSpecialStop;
 
 	// Use this for initialization
 	void Start () 
@@ -77,8 +95,10 @@ public class ObstacleManager : MonoBehaviour {
 		collectable_Big = Resources.Load("Prefabs/Collectables/Collectable_Big") as GameObject;
 		collectable_Boost = Resources.Load("Prefabs/Collectables/Collectable_Boost_1") as GameObject;
 
-		CharCollison.OnCollision += GameOver;
-		CharCollison.OnCollision += StopSpawning;
+		//particle effects
+		ParticleSystem.EmissionModule em = specialEffect_1.emission;
+		em.enabled = false;
+
 		spawning = false;
 
 		foreach (Transform child in transform) 
@@ -87,7 +107,15 @@ public class ObstacleManager : MonoBehaviour {
 			spawnPoints.Add (obj);
 		}
 
+		mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+		normalColor = mainCam.backgroundColor;
+
 		StartCoroutine ("Spawner");
+	}
+	void Awake()
+	{
+		CharCollison.OnCollision += GameOver;
+		CharCollison.OnCollision += StopSpawning;
 	}
 	void OnDisable()
 	{
@@ -106,9 +134,17 @@ public class ObstacleManager : MonoBehaviour {
 
 		while (spawning && GameManager.Instance.gameOver == false) 
 		{
+			if(spawningSpecial)
+			{
+				while(spawningSpecial)
+				{
+					yield return null;
+				}
+			}
+
 			startCheck += 1;
 			int spawnDirection = Random.Range (0, 2);
-			int spawnCheck = Random.Range (0, 4);
+			int spawnCheck = Random.Range (0, 5);
 
 			if (startCheck >= 2 && spawnCheck == 1) 
 			{
@@ -139,7 +175,7 @@ public class ObstacleManager : MonoBehaviour {
 						tempPoint = spawnPoints.Count-1;
 
 					int specialSpawn = Random.Range(0, 62);
-					if(specialSpawn == 1 && boostSpawned == false && GameManager.Instance.boostOngoing == false)
+					if(specialSpawn == 1 && boostSpawned == false && GameManager.Instance.boostOngoing == false && spawningSpecial == false)
 					{
 						Instantiate (collectable_Boost, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
 						boostSpawned = true;
@@ -158,8 +194,7 @@ public class ObstacleManager : MonoBehaviour {
 
 					yield return null;
 				}
-
-//				yield return new WaitForSeconds (tempTime / 2f);
+				yield return null;
 			}
 
 //				else if(startCheck == 1)
@@ -169,16 +204,109 @@ public class ObstacleManager : MonoBehaviour {
 
 			if(GameManager.Instance.gameOver == false)
 			{
-				if(GameManager.Instance.currentLvlNumb == 1)
-					StartCoroutine ("SpawnLevel_1", spawnDirection);
-				if(GameManager.Instance.currentLvlNumb == 2)
-					StartCoroutine ("SpawnLevel_2", spawnDirection);
-				if(GameManager.Instance.currentLvlNumb == 3)
-					StartCoroutine ("SpawnLevel_3", spawnDirection);
-				if(GameManager.Instance.currentLvlNumb == 4)
-					StartCoroutine ("SpawnLevel_3", spawnDirection);
+				int specialCheck = Random.Range(0, 32);
+				if(specialCheck == 1 && GameManager.Instance.boostOngoing == false && startCheck > 10)
+				{
+					spawningSpecial = true;
+					StartCoroutine("SpawnSpecial_1");
+				}
+				else
+				{
+					if(GameManager.Instance.currentLvlNumb == 1)
+						StartCoroutine ("SpawnLevel_1", spawnDirection);
+					if(GameManager.Instance.currentLvlNumb == 2)
+						StartCoroutine ("SpawnLevel_2", spawnDirection);
+					if(GameManager.Instance.currentLvlNumb == 3)
+						StartCoroutine ("SpawnLevel_3", spawnDirection);
+					if(GameManager.Instance.currentLvlNumb == 4)
+						StartCoroutine ("SpawnLevel_3", spawnDirection);
+				}
 			}
 		}
+	}
+
+	IEnumerator SpawnSpecial_1()
+	{
+		yield return new WaitForSeconds(1);
+	
+		ParticleSystem.EmissionModule em = speedFake_2.emission;
+		em.enabled = false;
+		ParticleSystem.EmissionModule em_2 = specialEffect_1.emission;
+		em_2.enabled = true;
+
+		int spawnDirectionSpecial = Random.Range(0, 2);
+		float t = 0;
+		OnSpecialStart();
+		while(t < 1)
+		{
+			t += Time.deltaTime / 2f;
+			mainCam.backgroundColor = Color.Lerp(normalColor, specialColor_1, t);
+			yield return null;
+		}
+		while(spawningSpecial && GameManager.Instance.gameOver == false && spawning == true)
+		{
+		if(spawnDirectionSpecial == 0)
+			Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		if(spawnDirectionSpecial == 1)
+			Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+
+		yield return new WaitForSeconds(specialSpawnInterval);
+
+		if(spawnDirectionSpecial == 0)
+			Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		if(spawnDirectionSpecial == 1)
+			Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+
+		yield return new WaitForSeconds(specialSpawnInterval);
+
+		if(spawnDirectionSpecial == 0)
+			Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		if(spawnDirectionSpecial == 1)
+			Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+
+		yield return new WaitForSeconds(specialSpawnInterval);
+
+		if(spawnDirectionSpecial == 0)
+			Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		if(spawnDirectionSpecial == 1)
+			Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+
+		yield return new WaitForSeconds(specialSpawnInterval);
+
+		if(spawnDirectionSpecial == 0)
+			Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		if(spawnDirectionSpecial == 1)
+			Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+
+		yield return new WaitForSeconds(specialSpawnInterval);
+
+		if(spawnDirectionSpecial == 0)
+			Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+		if(spawnDirectionSpecial == 1)
+			Instantiate (obstacle_Big_Rot_Fast_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
+
+		spawningSpecial = false;
+		yield return null;
+		}
+
+		t = 0;
+		yield return new WaitForSeconds(1);
+
+		if(GameManager.Instance.gameOver == false)
+		{
+			em.enabled = true;
+		}
+
+		em_2.enabled = false;
+
+		OnSpecialStop();
+		while(t < 1)
+		{
+			t += Time.deltaTime / 2f;
+			mainCam.backgroundColor = Color.Lerp(specialColor_1, normalColor, t);
+			yield return null;
+		}
+		yield return null;
 	}
 
 	IEnumerator SpawnLevel_1(int spawnDirection)
@@ -249,14 +377,14 @@ public class ObstacleManager : MonoBehaviour {
 		int tempIns = Random.Range (0, spawnPoints.Count);	
 		int randomNr = Random.Range (0, 15);
 
-		if (randomNr == 1 || randomNr == 2 || randomNr == 3) 
+		if (randomNr == 1 || randomNr == 2) 
 		{
 			if(spawnDirection == 0)
 				Instantiate (obstalce_Big_Rot_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 			if(spawnDirection == 1)
 				Instantiate (obstalce_Big_Rot_2, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
-		else if (randomNr == 4 || randomNr == 5) 
+		else if (randomNr == 3 || randomNr == 4 || randomNr == 5) 
 		{
 			if(spawnDirection == 0)
 				Instantiate (obstacle_Big_Rot_Fast_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));

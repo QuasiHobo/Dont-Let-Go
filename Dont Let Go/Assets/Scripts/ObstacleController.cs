@@ -11,6 +11,8 @@ public class ObstacleController : MonoBehaviour {
 	Color endColor = new Color32(49,47,47,1);
 	public float obstacleScore = 1f;
 
+	Camera mainCam;
+
 	public GameObject distanceObject;
 	float startDistance;
 
@@ -23,12 +25,9 @@ public class ObstacleController : MonoBehaviour {
 	// Use this for initialization 
 	void Start () 
 	{
-		gameOver = false;
-		CharCollison.OnCollision += GameOver;
-		myRenderers.Add(this.gameObject.GetComponent<Renderer>());
-		moveSpeed = GameManager.Instance.gameSpeed;
-		distanceObject = GameObject.FindGameObjectWithTag ("DistanceTarget");
-		startDistance = this.transform.position.y - distanceObject.transform.position.y; 
+		mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+		startColor = mainCam.backgroundColor;
+
 		foreach (Transform child in transform) 
 		{
 			GameObject obj = child.gameObject;
@@ -36,10 +35,27 @@ public class ObstacleController : MonoBehaviour {
 		}
 		foreach (Renderer rend in myRenderers) 
 		{
-			rend.material.color = Color.white;
+			rend.material.color = mainCam.backgroundColor;
+			rend.enabled = true;
+		}
+		this.gameObject.GetComponent<Renderer>().material.color = mainCam.backgroundColor;
+		this.gameObject.GetComponent<Renderer>().enabled = true;
+
+		gameOver = false;
+		myRenderers.Add(this.gameObject.GetComponent<Renderer>());
+		moveSpeed = GameManager.Instance.gameSpeed;
+		distanceObject = GameObject.FindGameObjectWithTag ("DistanceTarget");
+		startDistance = this.transform.position.y - distanceObject.transform.position.y; 
+
+		if(GameManager.Instance.gameOver)
+		{
+			GameOver("lol");
 		}
 	}
-
+	void Awake()
+	{
+		CharCollison.OnCollision += GameOver;
+	}
 	void OnDisable()
 	{
 		CharCollison.OnCollision -= GameOver;
@@ -48,6 +64,8 @@ public class ObstacleController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+//		startColor = mainCam.backgroundColor;
+
 		if (!gameOver) 
 		{
 			transform.Translate (Vector3.up * GameManager.Instance.gameSpeed * Time.deltaTime, Space.World); 
@@ -71,6 +89,7 @@ public class ObstacleController : MonoBehaviour {
 		{
 			foreach (Renderer rend in myRenderers) 
 			{
+				startColor = mainCam.backgroundColor;
 				rend.gameObject.GetComponent<Collider> ().enabled = false;
 				rend.material.color = Color.Lerp (rend.material.color, startColor, t);
 			}

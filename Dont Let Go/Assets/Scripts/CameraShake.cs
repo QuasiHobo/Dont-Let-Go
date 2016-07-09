@@ -14,7 +14,7 @@ public class CameraShake : MonoBehaviour {
 	// Amplitude of the shake. A larger value shakes the camera harder.
 	public float shakeAmount = 0.7f;
 	public float decreaseFactor = 1.0f;
-
+	float tempShakeAmount;
 	Vector3 originalPos;
 
 	bool startshake = false;
@@ -23,6 +23,8 @@ public class CameraShake : MonoBehaviour {
 	{
 		CharCollison.OnCollision += StopShake;
 		CollectDetector.OnCollectBoost += Boost;
+		ObstacleManager.OnSpecialStart += SpecialShake;
+		ObstacleManager.OnSpecialStop += StopSpecial;
 
 		if (camTransform == null)
 		{
@@ -38,8 +40,18 @@ public class CameraShake : MonoBehaviour {
 	{
 		CharCollison.OnCollision -= StopShake;
 		CollectDetector.OnCollectBoost -= Boost;
+		ObstacleManager.OnSpecialStart -= SpecialShake;
+		ObstacleManager.OnSpecialStop -= StopSpecial;
 	}
-
+	void SpecialShake()
+	{
+		tempShakeAmount = shakeAmount;
+		shakeAmount *= 1.6f;
+	}
+	void StopSpecial()
+	{
+		shakeAmount = tempShakeAmount;
+	}
 	void StopShake(string charNumb)
 	{
 		if (charNumb != "lol") {
@@ -78,7 +90,7 @@ public class CameraShake : MonoBehaviour {
 		{
 			if (shakeDuration > 0)
 			{
-				camTransform.localPosition = camBoostPos.localPosition + Random.insideUnitSphere * (shakeAmount*1.45f);
+				camTransform.localPosition = camBoostPos.localPosition + Random.insideUnitSphere * (shakeAmount*1.85f);
 
 				shakeDuration -= Time.deltaTime * decreaseFactor;
 			}

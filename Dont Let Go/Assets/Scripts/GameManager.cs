@@ -85,15 +85,23 @@ public class GameManager : MonoBehaviour
 	float camFOVend = 110f;
 	bool endBoost = false;
 	bool waitForCollide = false;
+	float boostSpeed = 45f;
+	float boostSpawnTime = 0.35f;
 
 	//Particle Systems
 	public ParticleSystem speedFaking;
 	public ParticleSystem speedFaking_2;
+	public ParticleSystem boostEffect_1;
+
 	float speedFakeWait = 0f;
 	float speedFakeRate;
 	float speedFakeStart = 1f;
 	float speedFakeEnd = 85f;
 	float speedFakeRateDuration = 600f;
+
+	//Special lvl stuff
+	bool specialLevelGoing = false;
+	float tempGameSpeed = 0;
 
 	// Use this for initialization
 	void Start () 
@@ -109,6 +117,8 @@ public class GameManager : MonoBehaviour
 		em.enabled = true;
 		ParticleSystem.EmissionModule em_2 = speedFaking_2.emission;
 		em_2.enabled = true;
+		ParticleSystem.EmissionModule em_3 = boostEffect_1.emission;
+		em_3.enabled = false;
 
 		//Handling collectables
 		amountCollected = 0;
@@ -120,11 +130,14 @@ public class GameManager : MonoBehaviour
 		playButton.enabled = false;
 		restartButton.gameObject.SetActive (false);
 
+		//Events listening
 		CharCollison.OnCollision += GameOver;
 		CollectDetector.OnCollect += Collected;
 		CollectDetector.OnCollectBoost += BoostCollected;
 		CollectDetector.OnCollectBig += BigCollected;
 		ScoreDetector.OnCollided += AfterBoostCollided;
+		ObstacleManager.OnSpecialStart += SpecialLevelStarted;
+		ObstacleManager.OnSpecialStop += SpecialLevelStopped;
 
 		StartCoroutine("GameProgression");
 	}
@@ -136,6 +149,48 @@ public class GameManager : MonoBehaviour
 		CollectDetector.OnCollectBoost -= BoostCollected;
 		CollectDetector.OnCollectBig -= BigCollected;
 		ScoreDetector.OnCollided -= AfterBoostCollided;
+		ObstacleManager.OnSpecialStart -= SpecialLevelStarted;
+		ObstacleManager.OnSpecialStop -= SpecialLevelStopped;
+	}
+	void SpecialLevelStarted()
+	{
+		StartCoroutine("SpecialLevelInit");
+	}
+	IEnumerator SpecialLevelInit()
+	{
+		specialLevelGoing = true;
+		tempGameSpeed = gameSpeed;
+		float t = 0;
+		if(gameSpeed < 23)
+		{
+			while(t < 1)
+			{
+				t += Time.deltaTime / 2f;
+				gameSpeed = Mathf.Lerp(tempGameSpeed, 23, t);
+				yield return null;
+			}
+		}
+		yield return null;
+	}
+	void SpecialLevelStopped()
+	{
+		StartCoroutine("SpecialLevelEnd");
+	}
+	IEnumerator SpecialLevelEnd()
+	{
+		float t = 0;
+		float newTempSpeed = gameSpeed;
+		if(tempGameSpeed < 23)
+		{
+			while(t < 1)
+			{
+				t += Time.deltaTime / 2f;
+				gameSpeed = Mathf.Lerp(newTempSpeed, tempGameSpeed, t);
+				yield return null;
+			}
+		}
+		specialLevelGoing = false;
+		yield return null;
 	}
 	void AfterBoostCollided()
 	{
@@ -166,6 +221,10 @@ public class GameManager : MonoBehaviour
 	IEnumerator DoBoost()
 	{
 		boostOngoing = true;
+
+		ParticleSystem.EmissionModule em = boostEffect_1.emission;
+		em.enabled = true;
+
 		float tempGameSpeed;
 		float tempSpawnTime;
 		tempSpawnTime = spawnTime;
@@ -176,8 +235,8 @@ public class GameManager : MonoBehaviour
 		while(t < 1)
 		{
 			t += Time.deltaTime / 1f;
-			gameSpeed = Mathf.Lerp (tempGameSpeed, 40, t);
-			spawnTime = Mathf.Lerp (tempSpawnTime, 0.35f, t);
+			gameSpeed = Mathf.Lerp (tempGameSpeed, boostSpeed, t);
+			spawnTime = Mathf.Lerp (tempSpawnTime, boostSpawnTime, t);
 			camPos = Mathf.Lerp(camStart.position.y, camEnd.position.y, t);
 			mainCam.transform.position = new Vector3(0, camPos, 0);
 			mainCam.fieldOfView = Mathf.Lerp(camFOVstart, camFOVend, t);
@@ -190,7 +249,7 @@ public class GameManager : MonoBehaviour
 		while(t < 1)
 		{
 			t += Time.deltaTime / (boostTime/2);
-			spawnTime = Mathf.Lerp (0.35f, 1.5f, t);
+			spawnTime = Mathf.Lerp (boostSpawnTime, 1.5f, t);
 			yield return null;
 		}
 
@@ -214,12 +273,17 @@ public class GameManager : MonoBehaviour
 			mainCam.fieldOfView = Mathf.Lerp(camFOVend, camFOVstart, t);
 			yield return null;
 		}
-			
+
+		em = boostEffect_1.emission;
+		em.enabled = false;
+
 		gameSpeed = tempGameSpeed;
 		spawnTime = tempSpawnTime;
 		boostOngoing = false;
 		waitForCollide = false;
 		endBoost = false;
+
+		t = 0f;
 	}
 
 	IEnumerator GameProgression () 
@@ -228,7 +292,7 @@ public class GameManager : MonoBehaviour
 		{
 			while (t_speed < 1)
 				{
-					if(!boostOngoing)
+					if(!boostOngoing && !specialLevelGoing)
 					{
 						t_speed += Time.deltaTime / endSpeedDuration;
 						gameSpeed = Mathf.Lerp (startSpeed, endSpeed, t_speed);
@@ -247,7 +311,7 @@ public class GameManager : MonoBehaviour
 
 			while (t_speed < 1)
 			{
-				if(!boostOngoing)
+				if(!boostOngoing && !specialLevelGoing)
 				{
 					t_speed += Time.deltaTime / endSpeedDuration_2;
 					gameSpeed = Mathf.Lerp (startSpeed_2, endSpeed_2, t_speed);
@@ -266,7 +330,7 @@ public class GameManager : MonoBehaviour
 
 			while (t_speed < 1)
 			{
-				if(!boostOngoing)
+				if(!boostOngoing && !specialLevelGoing)
 				{
 					t_speed += Time.deltaTime / endSpeedDuration_3;
 					gameSpeed = Mathf.Lerp (startSpeed_3, endSpeed_3, t_speed);
@@ -285,7 +349,7 @@ public class GameManager : MonoBehaviour
 
 			while (t_speed < 1)
 			{
-				if(!boostOngoing)
+				if(!boostOngoing && !specialLevelGoing)
 				{
 					t_speed += Time.deltaTime / endSpeedDuration_4;
 					gameSpeed = Mathf.Lerp (startSpeed_4, endSpeed_4, t_speed);

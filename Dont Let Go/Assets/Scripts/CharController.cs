@@ -14,6 +14,8 @@ public class CharController : MonoBehaviour {
 	GameObject legPosDown;
 	GameObject legPosUp;
 
+	Camera mainCam;
+
 	public float startBodyWeight = 0.2f;
 	public float hugBodyWeight = 0.0f;
 	public float hugDuration = 3.0f;
@@ -44,6 +46,8 @@ public class CharController : MonoBehaviour {
 
 		FBBIK.solver.bodyEffector.positionWeight = startBodyWeight;
 		legController.transform.position = legPosDown.transform.position;
+
+		mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 	}
 
 	void OnDisable()
@@ -125,10 +129,12 @@ public class CharController : MonoBehaviour {
 	{
 		float t = 0;
 		float duration = 2.5f;
+		Color tempColor = mainCam.backgroundColor;
 		while (t < 1) 
 		{
+			tempColor = mainCam.backgroundColor;
 			t += Time.deltaTime / duration;
-			charRend.material.color = Color.Lerp(startColor, Color.white, t);
+			charRend.material.color = Color.Lerp(startColor, tempColor, t);
 			yield return null;
 		}
 		yield return null;

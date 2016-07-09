@@ -55,6 +55,7 @@
      <Compile Include="Assets\Scripts\FloorCollison.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\HeartIconController.cs" />
+     <Compile Include="Assets\Scripts\KillParticleScript.cs" />
      <Compile Include="Assets\Scripts\ObstacleController.cs" />
      <Compile Include="Assets\Scripts\ObstacleDetector.cs" />
      <Compile Include="Assets\Scripts\ObstacleManager.cs" />
