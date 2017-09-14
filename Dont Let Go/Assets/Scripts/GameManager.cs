@@ -103,6 +103,9 @@ public class GameManager : MonoBehaviour
 	bool specialLevelGoing = false;
 	float tempGameSpeed = 0;
 
+	//DeathQuote
+	public Text deathQuote;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -138,6 +141,9 @@ public class GameManager : MonoBehaviour
 		ScoreDetector.OnCollided += AfterBoostCollided;
 		ObstacleManager.OnSpecialStart += SpecialLevelStarted;
 		ObstacleManager.OnSpecialStop += SpecialLevelStopped;
+
+		//Setup up UI for deathqoute
+		deathQuote.enabled = false;
 
 		StartCoroutine("GameProgression");
 	}
@@ -407,7 +413,31 @@ public class GameManager : MonoBehaviour
 		Debug.Log ("SCORE: " + endScore);
 		Debug.Log ("Highscore: " + highScore);
 
-		yield return new WaitForSeconds (1.5f);
+		deathQuote.enabled = true;
+
+		Color startColor = new Color32(0,0,50,0);
+		Color endColor = new Color32(0,0,50,255);
+		deathQuote.color = startColor;
+		float t = 0;
+
+		yield return new WaitForSeconds(1f);
+
+		while(t < 1)
+		{
+			t += Time.deltaTime/2;
+			deathQuote.color = Color.Lerp(startColor, endColor,t);
+			yield return null;
+		}
+
+		t = 0;
+		yield return new WaitForSeconds(0.35f);
+		while(t < 1)
+		{
+			t += Time.deltaTime;
+			deathQuote.color = Color.Lerp(endColor,startColor,t);
+			yield return null;
+		}
+		deathQuote.enabled = false;
 		restartButton.gameObject.SetActive (true);
 		yield return null;
 	}

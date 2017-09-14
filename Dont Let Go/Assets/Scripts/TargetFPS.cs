@@ -9,7 +9,7 @@ public class TargetFPS : MonoBehaviour {
 	public Vector4 RectData = new Vector4(0,0,100,35);
 
 	void Awake() {
-		Application.targetFrameRate = 30;
+		Application.targetFrameRate = 60;
 	}
 
 	void Update () 

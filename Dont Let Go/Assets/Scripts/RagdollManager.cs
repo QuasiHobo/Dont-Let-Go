@@ -9,7 +9,7 @@ public class RagdollManager : MonoBehaviour {
 
 	public List<GameObject> listOfRb = new List<GameObject>();
 	public FullBodyBipedIK FBBIK;
-	public Animator myAnim;
+//	public Animator myAnim;
 
 	public Rigidbody hips;
 
@@ -50,7 +50,7 @@ public class RagdollManager : MonoBehaviour {
 	void EnableRagDolls(string charNumb)
 	{
 		FBBIK.enabled = false;
-		myAnim.enabled = false;
+//		myAnim.enabled = false;
 
 		if (this.gameObject.tag == "Char1") 
 		{
