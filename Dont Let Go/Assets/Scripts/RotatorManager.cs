@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class RotatorManager : MonoBehaviour {
 		
-	float touchSpeed = 16f; //16-18 for mobile builds
+	float touchSpeed = 14f; //16-18 for mobile builds
 
 	Rigidbody myRB;
 	bool leftMovePressed = false;

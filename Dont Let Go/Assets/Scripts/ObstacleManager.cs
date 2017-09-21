@@ -174,7 +174,7 @@ public class ObstacleManager : MonoBehaviour {
 					if (tempPoint < 0 && spawnDirection == 1)
 						tempPoint = spawnPoints.Count-1;
 
-					int specialSpawn = Random.Range(0, 30);
+					int specialSpawn = Random.Range(0, 25);
 					if(specialSpawn == 1 && boostSpawned == false && GameManager.Instance.boostOngoing == false && spawningSpecial == false)
 					{
 						Instantiate (collectable_Boost, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);

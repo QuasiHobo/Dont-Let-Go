@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityStandardAssets.ImageEffects;
 
 public class GameManager : MonoBehaviour 
 {
@@ -96,15 +97,27 @@ public class GameManager : MonoBehaviour
 	float speedFakeWait = 0f;
 	float speedFakeRate;
 	float speedFakeStart = 1f;
-	float speedFakeEnd = 85f;
-	float speedFakeRateDuration = 600f;
+	float speedFakeEnd = 100f;
+	float speedFakeRateDuration = 300f;
 
 	//Camera STuff
 	public Animation camAnimation;
+	private BloomOptimized myBloom;
+	float startBloomIntensity;
+	float startBloomThreshold;
+	float endBloomIntensity = 1f;
+	float endBloomThreshold = 0.6f;
+
+	//Touch UI stuff
+	public ParticleSystem rightButtonParticles;
+	public ParticleSystem leftButtonParticles;
 
 	//Special lvl stuff
 	bool specialLevelGoing = false;
 	float tempGameSpeed = 0;
+
+	//Hug Related stuff
+	bool hugging;
 
 	//DeathQuote
 	public Text deathQuote;
@@ -117,6 +130,10 @@ public class GameManager : MonoBehaviour
 	{
 		//OBS!!! Deleting playerprefs for testing purposes
 		PlayerPrefs.DeleteAll();
+
+		myBloom = mainCam.GetComponent<BloomOptimized>();
+		startBloomIntensity = myBloom.intensity;
+		startBloomThreshold = myBloom.threshold;
 
 		camAnimation.Play("Cam_OnStart_Anim_1");
 
@@ -152,11 +169,44 @@ public class GameManager : MonoBehaviour
 		ScoreDetector.OnCollided += AfterBoostCollided;
 		ObstacleManager.OnSpecialStart += SpecialLevelStarted;
 		ObstacleManager.OnSpecialStop += SpecialLevelStopped;
+		RotatorManager.OnHug += StartHug;
+		RotatorManager.OnStopHug += StopHug;
 
 		//Setup up UI for deathqoute
 		deathQuote.enabled = false;
 
 		StartCoroutine("GameProgression");
+	}
+	void StartHug()
+	{
+		hugging = true;
+		StartCoroutine("WhileHugging");
+	}
+	void StopHug()
+	{
+		hugging = false;
+	}
+	IEnumerator WhileHugging()
+	{
+		float t = 0;
+		while(hugging)
+		{
+			if(t < 1)
+			{
+				t += Time.deltaTime / 2.5f;
+				myBloom.intensity = Mathf.Lerp(startBloomIntensity, endBloomIntensity, t);
+				myBloom.threshold = Mathf.Lerp(startBloomThreshold, endBloomThreshold, t);
+			}
+			yield return null;
+		}
+		t = 0;
+		while(t < 1 && !hugging)
+		{
+			t+= Time.deltaTime;
+			myBloom.intensity = Mathf.Lerp(endBloomIntensity, startBloomIntensity, t);
+			myBloom.threshold = Mathf.Lerp(endBloomThreshold, startBloomThreshold, t);
+			yield return null;
+		}
 	}
 
 	IEnumerator UiRoutine()
@@ -175,6 +225,8 @@ public class GameManager : MonoBehaviour
 		ScoreDetector.OnCollided -= AfterBoostCollided;
 		ObstacleManager.OnSpecialStart -= SpecialLevelStarted;
 		ObstacleManager.OnSpecialStop -= SpecialLevelStopped;
+		RotatorManager.OnHug -= StartHug;
+		RotatorManager.OnStopHug -= StopHug;
 	}
 	void SpecialLevelStarted()
 	{
@@ -246,6 +298,9 @@ public class GameManager : MonoBehaviour
 	{
 		boostOngoing = true;
 
+		leftButtonParticles.gameObject.SetActive(false);
+		rightButtonParticles.gameObject.SetActive(false);
+
 		ParticleSystem.EmissionModule em = boostEffect_1.emission;
 		em.enabled = true;
 
@@ -263,6 +318,8 @@ public class GameManager : MonoBehaviour
 			t += Time.deltaTime / 1f;
 			gameSpeed = Mathf.Lerp (tempGameSpeed, boostSpeed, t);
 			spawnTime = Mathf.Lerp (tempSpawnTime, boostSpawnTime, t);
+			myBloom.intensity = Mathf.Lerp (startBloomIntensity, endBloomIntensity, t);
+			myBloom.threshold = Mathf.Lerp (startBloomThreshold, endBloomThreshold, t);
 //			camPos = Mathf.Lerp(camStart.position.y, camEnd.position.y, t);
 //			mainCam.transform.position = new Vector3(0, camPos, 0);
 //			mainCam.fieldOfView = Mathf.Lerp(camFOVstart, camFOVend, t);
@@ -289,16 +346,23 @@ public class GameManager : MonoBehaviour
 			yield return null;
 		}
 
+		camAnimation.Play("Cam_BoostEnd_Anim_1");
+
 		while(t < 1)
 		{
 			t += Time.deltaTime / 0.25f;
 			gameSpeed = Mathf.Lerp (gameSpeed, tempGameSpeed, t);
 			spawnTime = Mathf.Lerp (spawnTime, tempSpawnTime, t);
+			myBloom.intensity = Mathf.Lerp (endBloomIntensity, startBloomIntensity, t);
+			myBloom.threshold = Mathf.Lerp (endBloomThreshold, startBloomThreshold, t);
 //			camPos = Mathf.Lerp(camEnd.position.y, camStart.position.y, t);
 //			mainCam.transform.position = new Vector3(0, camPos, 0);
 //			mainCam.fieldOfView = Mathf.Lerp(camFOVend, camFOVstart, t);
 			yield return null;
 		}
+
+		leftButtonParticles.gameObject.SetActive(true);
+		rightButtonParticles.gameObject.SetActive(true);
 
 		em = boostEffect_1.emission;
 		em.enabled = false;
