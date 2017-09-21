@@ -79,14 +79,14 @@ public class GameManager : MonoBehaviour
 	public bool boostOngoing = false;
 	public float boostTime = 5f;
 	public Camera mainCam;
-	public Transform camStart;
-	public Transform camEnd;
+//	public Transform camStart;
+//	public Transform camEnd;
 	float camFOVstart = 65f;
 	float camFOVend = 110f;
 	bool endBoost = false;
 	bool waitForCollide = false;
-	float boostSpeed = 45f;
-	float boostSpawnTime = 0.35f;
+	public float boostSpeed = 45f;
+	public float boostSpawnTime = 0.35f;
 
 	//Particle Systems
 	public ParticleSystem speedFaking;
@@ -98,6 +98,9 @@ public class GameManager : MonoBehaviour
 	float speedFakeStart = 1f;
 	float speedFakeEnd = 85f;
 	float speedFakeRateDuration = 600f;
+
+	//Camera STuff
+	public Animation camAnimation;
 
 	//Special lvl stuff
 	bool specialLevelGoing = false;
@@ -114,6 +117,8 @@ public class GameManager : MonoBehaviour
 	{
 		//OBS!!! Deleting playerprefs for testing purposes
 		PlayerPrefs.DeleteAll();
+
+		camAnimation.Play("Cam_OnStart_Anim_1");
 
 		uiParent.gameObject.SetActive(false);
 		StartCoroutine("UiRoutine");
@@ -250,6 +255,8 @@ public class GameManager : MonoBehaviour
 		tempGameSpeed = gameSpeed;
 		float t = 0;
 		float camPos = 0;
+
+		camAnimation.Play("Cam_BoostStart_Anim_1");
 
 		while(t < 1)
 		{
