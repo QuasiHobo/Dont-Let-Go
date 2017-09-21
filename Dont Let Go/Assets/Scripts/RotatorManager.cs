@@ -54,12 +54,12 @@ public class RotatorManager : MonoBehaviour {
 	{
 			if (leftMovePressed) {
 				myRB.AddRelativeTorque (0, -1 * touchSpeed, 0, ForceMode.Acceleration);
-				char1Heart.material.color = Color.Lerp (char1Heart.material.color, heartEndColor, Time.deltaTime * 4f);
+				char1Heart.material.color = Color.Lerp (char1Heart.material.color, heartEndColor*3f, Time.deltaTime * 4f);
 			} else
 				char1Heart.material.color = Color.Lerp (char1Heart.material.color, heartStartColor, Time.deltaTime * 2f);
 			if (rightMovePressed) {
 				myRB.AddRelativeTorque (0, -(-1) * touchSpeed, 0, ForceMode.Acceleration);
-				char2Heart.material.color = Color.Lerp (char2Heart.material.color, heartEndColor, Time.deltaTime * 4f);
+				char2Heart.material.color = Color.Lerp (char2Heart.material.color, heartEndColor*3f, Time.deltaTime * 4f);
 			} else
 				char2Heart.material.color = Color.Lerp (char2Heart.material.color, heartStartColor, Time.deltaTime * 2f);
 

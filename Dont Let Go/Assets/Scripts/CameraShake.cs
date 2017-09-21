@@ -86,14 +86,14 @@ public class CameraShake : MonoBehaviour {
 				camTransform.localPosition = originalPos;
 			}
 		}
-		if(GameManager.Instance.boostOngoing == true && startshake)
-		{
-			if (shakeDuration > 0)
-			{
-				camTransform.localPosition = camBoostPos.localPosition + Random.insideUnitSphere * (shakeAmount*1.85f);
-
-				shakeDuration -= Time.deltaTime * decreaseFactor;
-			}
-		}
+//		if(GameManager.Instance.boostOngoing == true && startshake)
+//		{
+//			if (shakeDuration > 0)
+//			{
+//				camTransform.localPosition = camBoostPos.localPosition + Random.insideUnitSphere * (shakeAmount*1.85f);
+//
+//				shakeDuration -= Time.deltaTime * decreaseFactor;
+//			}
+//		}
 	}
 }

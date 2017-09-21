@@ -1,21 +1,21 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CollectDetector.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\CharController.cs">
     <Files>
-      <File FileName="Assets\Scripts\GameManager.cs" Line="433" Column="42" />
+      <File FileName="Assets\Scripts\GameManager.cs" Line="290" Column="6" />
       <File FileName="Assets\Scripts\ScoreDetector.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ObstacleManager.cs" Line="240" Column="3" />
-      <File FileName="Assets\Scripts\RotatorManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ObstacleManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\RotatorManager.cs" Line="62" Column="88" />
       <File FileName="Assets\Scripts\CollectableController.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\ObstacleController.cs" Line="10" Column="2" />
-      <File FileName="Assets\Scripts\CollectDetector.cs" Line="45" Column="6" />
-      <File FileName="Assets\Scripts\CharController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\ObstacleController.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CollectDetector.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CharController.cs" Line="40" Column="1" />
       <File FileName="Assets\Scripts\DoubleTapObjectController.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\CharCollison.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\RagdollManager.cs" Line="12" Column="3" />
-      <File FileName="Assets\Scripts\CameraShake.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\RagdollManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\CameraShake.cs" Line="89" Column="3" />
       <File FileName="Assets\Scripts\KillParticleScript.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\TargetFPS.cs" Line="12" Column="35" />
+      <File FileName="Assets\Scripts\TargetFPS.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

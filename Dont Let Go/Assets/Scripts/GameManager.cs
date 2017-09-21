@@ -106,11 +106,17 @@ public class GameManager : MonoBehaviour
 	//DeathQuote
 	public Text deathQuote;
 
+	//UIStuff
+	public GameObject uiParent;
+
 	// Use this for initialization
 	void Start () 
 	{
 		//OBS!!! Deleting playerprefs for testing purposes
 		PlayerPrefs.DeleteAll();
+
+		uiParent.gameObject.SetActive(false);
+		StartCoroutine("UiRoutine");
 
 		highScore = PlayerPrefs.GetFloat ("Highscore");
 		Debug.Log ("highscore: " + highScore);
@@ -146,6 +152,13 @@ public class GameManager : MonoBehaviour
 		deathQuote.enabled = false;
 
 		StartCoroutine("GameProgression");
+	}
+
+	IEnumerator UiRoutine()
+	{
+		yield return new WaitForSeconds (1.5f);
+		uiParent.gameObject.SetActive(true);
+		yield return null;
 	}
 
 	void OnDisable()
@@ -243,9 +256,9 @@ public class GameManager : MonoBehaviour
 			t += Time.deltaTime / 1f;
 			gameSpeed = Mathf.Lerp (tempGameSpeed, boostSpeed, t);
 			spawnTime = Mathf.Lerp (tempSpawnTime, boostSpawnTime, t);
-			camPos = Mathf.Lerp(camStart.position.y, camEnd.position.y, t);
-			mainCam.transform.position = new Vector3(0, camPos, 0);
-			mainCam.fieldOfView = Mathf.Lerp(camFOVstart, camFOVend, t);
+//			camPos = Mathf.Lerp(camStart.position.y, camEnd.position.y, t);
+//			mainCam.transform.position = new Vector3(0, camPos, 0);
+//			mainCam.fieldOfView = Mathf.Lerp(camFOVstart, camFOVend, t);
 			yield return null;
 		}
 
@@ -274,9 +287,9 @@ public class GameManager : MonoBehaviour
 			t += Time.deltaTime / 0.25f;
 			gameSpeed = Mathf.Lerp (gameSpeed, tempGameSpeed, t);
 			spawnTime = Mathf.Lerp (spawnTime, tempSpawnTime, t);
-			camPos = Mathf.Lerp(camEnd.position.y, camStart.position.y, t);
-			mainCam.transform.position = new Vector3(0, camPos, 0);
-			mainCam.fieldOfView = Mathf.Lerp(camFOVend, camFOVstart, t);
+//			camPos = Mathf.Lerp(camEnd.position.y, camStart.position.y, t);
+//			mainCam.transform.position = new Vector3(0, camPos, 0);
+//			mainCam.fieldOfView = Mathf.Lerp(camFOVend, camFOVstart, t);
 			yield return null;
 		}
 
@@ -397,6 +410,7 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator GameOverState()
 	{
+		uiParent.gameObject.SetActive(false);
 		endScore = ScoreDetector.Instance.totalScore;
 
 		ParticleSystem.EmissionModule em = speedFaking.emission;
