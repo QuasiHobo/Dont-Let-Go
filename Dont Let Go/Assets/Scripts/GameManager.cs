@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
 	float speedFakeWait = 0f;
 	float speedFakeRate;
 	float speedFakeStart = 1f;
-	float speedFakeEnd = 100f;
+	float speedFakeEnd = 85f;
 	float speedFakeRateDuration = 300f;
 
 	//Camera STuff
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
 	private BloomOptimized myBloom;
 	float startBloomIntensity;
 	float startBloomThreshold;
-	float endBloomIntensity = 1f;
+	float endBloomIntensity = 0.9f;
 	float endBloomThreshold = 0.6f;
 
 	//Touch UI stuff
@@ -193,18 +193,19 @@ public class GameManager : MonoBehaviour
 		{
 			if(t < 1)
 			{
-				t += Time.deltaTime / 2.5f;
+				t += Time.deltaTime / 2f;
 				myBloom.intensity = Mathf.Lerp(startBloomIntensity, endBloomIntensity, t);
 				myBloom.threshold = Mathf.Lerp(startBloomThreshold, endBloomThreshold, t);
 			}
 			yield return null;
 		}
 		t = 0;
+		float tempIntensity = myBloom.intensity;
 		while(t < 1 && !hugging)
 		{
-			t+= Time.deltaTime;
-			myBloom.intensity = Mathf.Lerp(endBloomIntensity, startBloomIntensity, t);
-			myBloom.threshold = Mathf.Lerp(endBloomThreshold, startBloomThreshold, t);
+			t+= Time.deltaTime / 2.5f;
+			myBloom.intensity = Mathf.Lerp(tempIntensity, startBloomIntensity, t);
+			myBloom.threshold = Mathf.Lerp(tempIntensity, startBloomThreshold, t);
 			yield return null;
 		}
 	}

@@ -12,6 +12,7 @@ public class ObstacleController : MonoBehaviour {
 	public float obstacleScore = 1f;
 
 	Camera mainCam;
+	AudioSource myAudio;
 
 	public GameObject distanceObject;
 	float startDistance;
@@ -27,6 +28,9 @@ public class ObstacleController : MonoBehaviour {
 	{
 		mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 		startColor = mainCam.backgroundColor;
+
+		myAudio = gameObject.AddComponent<AudioSource>();
+		myAudio.clip = Resources.Load("Sounds & Music/Sounds/Heavy Whoosh") as AudioClip;
 
 		foreach (Transform child in transform) 
 		{
@@ -126,6 +130,11 @@ public class ObstacleController : MonoBehaviour {
 		if (collider.gameObject.tag == "DoubleTapObject") 
 		{
 			StartCoroutine ("DoubleTapDestroyed");
+		}
+
+		if(collider.gameObject.tag == "SoundTrigger")
+		{
+			myAudio.Play();
 		}
 	}
 }

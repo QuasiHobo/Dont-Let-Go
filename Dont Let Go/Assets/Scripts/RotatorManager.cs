@@ -18,7 +18,8 @@ public class RotatorManager : MonoBehaviour {
 	Color heartStartColor;
 	public Color heartEndColor;
 
-	public Image hugbar;
+	public Image hugbar_Right;
+	public Image hugbar_Left;
 	public float hugDuration = 2f;
 	public float hugRegeneration = 5f;
 
@@ -39,7 +40,8 @@ public class RotatorManager : MonoBehaviour {
 		tapAmount = 0;
 		heartStartColor = char1Heart.material.color;
 		myRB = this.GetComponent<Rigidbody> ();
-		hugbar.fillAmount = 1;
+		hugbar_Right.fillAmount = 1;
+		hugbar_Left.fillAmount = 1;
 	}
 
 	void OnDisable()
@@ -63,8 +65,9 @@ public class RotatorManager : MonoBehaviour {
 			} else
 				char2Heart.material.color = Color.Lerp (char2Heart.material.color, heartStartColor, Time.deltaTime * 2f);
 
-			if (!doingHug && hugbar.fillAmount <= 1) {
-				hugbar.fillAmount += Time.deltaTime / hugRegeneration;
+			if (!doingHug && hugbar_Right.fillAmount <= 1) {
+				hugbar_Right.fillAmount += Time.deltaTime / hugRegeneration;
+				hugbar_Left.fillAmount += Time.deltaTime / hugRegeneration;
 			}
 
 		//For testing on PC
@@ -95,7 +98,7 @@ public class RotatorManager : MonoBehaviour {
 		leftMovePressed = true;
 		if (leftMovePressed && rightMovePressed) 
 		{
-			if (hugbar.fillAmount > 0) 
+			if (hugbar_Right.fillAmount > 0) 
 			{
 				StartCoroutine ("DoublePressController");
 			}
@@ -106,7 +109,7 @@ public class RotatorManager : MonoBehaviour {
 		rightMovePressed = true;
 		if (leftMovePressed && rightMovePressed) 
 		{
-			if (hugbar.fillAmount > 0) 
+			if (hugbar_Right.fillAmount > 0) 
 			{
 				StartCoroutine ("DoublePressController");
 			}
@@ -120,10 +123,11 @@ public class RotatorManager : MonoBehaviour {
 			OnHug ();
 			yield return new WaitForSeconds (0.1f);
 			while (doingHug && GameManager.Instance.boostOngoing == false) {
-				if (hugbar.fillAmount > 0) {
-					hugbar.fillAmount -= Time.deltaTime / hugDuration;
+				if (hugbar_Right.fillAmount > 0) {
+					hugbar_Right.fillAmount -= Time.deltaTime / hugDuration;
+					hugbar_Left.fillAmount -= Time.deltaTime / hugDuration;
 				}
-				if (hugbar.fillAmount <= 0) {
+				if (hugbar_Right.fillAmount <= 0) {
 					doingHug = false;
 				}
 				yield return null;

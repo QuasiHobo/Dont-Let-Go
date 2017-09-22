@@ -22,19 +22,16 @@ public class AudioManager : MonoBehaviour {
 
 	public AudioSource mainMusic;
 	public AudioSource gameOverSound;
-	public AudioSource obstaclePass;
 
 	// Use this for initialization
 	void Start () 
 	{
 		//Listening to events
 		CharCollison.OnCollision += GameOver;
-		ScoreDetector.OnCollided += ObstaclePassed;
 	}
 	void OnDisable()
 	{
 		CharCollison.OnCollision -= GameOver;
-		ScoreDetector.OnCollided -= ObstaclePassed;
 	}
 	void GameOver(string lol)
 	{
@@ -50,10 +47,6 @@ public class AudioManager : MonoBehaviour {
 			mainMusic.volume = Mathf.Lerp(1, 0, t);
 			yield return null;
 		}
-	}
-	void ObstaclePassed()
-	{
-		obstaclePass.Play();
 	}
 	// Update is called once per frame
 	void Update () {

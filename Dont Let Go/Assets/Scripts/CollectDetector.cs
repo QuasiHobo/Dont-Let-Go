@@ -35,7 +35,8 @@ public class CollectDetector : MonoBehaviour {
 		{
 //			GameObject tempEffect = Instantiate(collectEffect_big, this.gameObject.transform.position, collectEffect_boost.transform.rotation) as GameObject;
 //			tempEffect.transform.parent = this.gameObject.transform;
-			Destroy (collider.gameObject);
+			collider.gameObject.GetComponent<CollectableController>().WasCollected();
+			//Destroy (collider.gameObject);
 			OnCollect ();
 			StartCoroutine("CamCollectColor");
 		}
