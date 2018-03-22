@@ -21,7 +21,7 @@ public class RotatorManager : MonoBehaviour {
 	public Image hugbar_Right;
 	public Image hugbar_Left;
 	public float hugDuration = 2f;
-	public float hugRegeneration = 5f;
+	float hugRegeneration = 85f;
 
 	int tapAmount = 0;
 
@@ -36,12 +36,14 @@ public class RotatorManager : MonoBehaviour {
 	{
 		//Events
 		CollectDetector.OnCollectBoost += BoostStarted;
+		CollectDetector.OnCollect += HugCollectSmall;
+		CollectDetector.OnCollectBig += HugCollectBig;
 
 		tapAmount = 0;
 		heartStartColor = char1Heart.material.color;
 		myRB = this.GetComponent<Rigidbody> ();
-		hugbar_Right.fillAmount = 1;
-		hugbar_Left.fillAmount = 1;
+		hugbar_Right.fillAmount = 0f;
+		hugbar_Left.fillAmount = 0f;
 	}
 
 	void OnDisable()
@@ -51,6 +53,16 @@ public class RotatorManager : MonoBehaviour {
 	void BoostStarted()
 	{
 		
+	}
+	void HugCollectSmall()
+	{
+		hugbar_Right.fillAmount += 0.015f;
+		hugbar_Left.fillAmount += 0.015f;
+	}
+	void HugCollectBig()
+	{
+		hugbar_Right.fillAmount += 0.1f;
+		hugbar_Left.fillAmount += 0.1f;
 	}
 	void Update()
 	{

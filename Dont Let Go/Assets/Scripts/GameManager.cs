@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
 	float startBloomIntensity;
 	float startBloomThreshold;
 	float endBloomIntensity = 0.9f;
-	float endBloomThreshold = 0.8f;
+	float endBloomThreshold = 0.65f;
 
 	//Touch UI stuff
 	public ParticleSystem rightButtonParticles;
@@ -142,6 +142,9 @@ public class GameManager : MonoBehaviour
 	public SkinnedMeshRenderer charRenderer2;
 	public MeshRenderer heart1;
 	public MeshRenderer heart2;
+
+	public GameObject charParent1;
+	public GameObject charParent2;
 
 	// Use this for initialization
 	void Start () 
@@ -548,7 +551,7 @@ public class GameManager : MonoBehaviour
 		deathQuote.enabled = true;
 
 		Color startColor = new Color32(0,0,50,0);
-		Color endColor = new Color32(0,11,48,255);
+		Color endColor = new Color32(48,46,46,215);
 		deathQuote.color = startColor;
 		float t = 0;
 

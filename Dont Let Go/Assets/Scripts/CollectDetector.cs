@@ -49,20 +49,22 @@ public class CollectDetector : MonoBehaviour {
 	
 	void OnTriggerEnter (Collider collider)
 	{
-		if (collider.tag == "Collectable") 
+		if(GameManager.Instance.gameOver == false)
 		{
+			if (collider.tag == "Collectable") 
+			{
 //			GameObject tempEffect = Instantiate(collectEffect_big, this.gameObject.transform.position, collectEffect_boost.transform.rotation) as GameObject;
 //			tempEffect.transform.parent = this.gameObject.transform;
-			collider.gameObject.GetComponent<CollectableController>().WasCollected();
-			//Destroy (collider.gameObject);
-			OnCollect ();
-			StartCoroutine("CamCollectColor");
-			StartCoroutine("CollectEffect");
-			myAudio.Play();
-		}
-		if(collider.tag == "Collectable_Boost")
-		{
-			Destroy (collider.gameObject);
+				collider.gameObject.GetComponent<CollectableController>().WasCollected();
+				//Destroy (collider.gameObject);
+				OnCollect ();
+				StartCoroutine("CamCollectColor");
+				StartCoroutine("CollectEffect");
+				myAudio.Play();
+			}
+			if(collider.tag == "Collectable_Boost")
+			{
+				Destroy (collider.gameObject);
 //			GameObject tempEffect = Instantiate(collectEffect_boost, this.gameObject.transform.position, collectEffect_boost.transform.rotation) as GameObject;
 //			tempEffect.transform.parent = this.gameObject.transform;
 
@@ -70,15 +72,16 @@ public class CollectDetector : MonoBehaviour {
 				OnCollectBoost();
 				myAudio.Play();
 			
-		}
-		if(collider.tag == "Collectable_Big")
-		{
-			Destroy (collider.gameObject);
+			}
+			if(collider.tag == "Collectable_Big")
+			{
+				Destroy (collider.gameObject);
 //			GameObject tempEffect = Instantiate(collectEffect_big, this.gameObject.transform.position, collectEffect_big.transform.rotation) as GameObject;
 //			tempEffect.transform.parent = this.gameObject.transform;
-			OnCollectBig ();
-			StartCoroutine("CollectEffect");
-			myAudio.Play();
+				OnCollectBig ();
+				StartCoroutine("CollectEffect");
+				myAudio.Play();
+			}
 		}
 	}
 

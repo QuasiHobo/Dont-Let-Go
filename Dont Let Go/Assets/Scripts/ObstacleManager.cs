@@ -161,7 +161,7 @@ public class ObstacleManager : MonoBehaviour {
 				float tempTime = GameManager.Instance.spawnTime;
 				int tempPoint = Random.Range (0, spawnPoints.Count);
 				int spawnAmount = 0;
-				int maxSpawnAmount = Random.Range (8, 18);
+				int maxSpawnAmount = Random.Range (6, 10);
 
 				int chanceForBonusLevel = Random.Range (0, GameManager.Instance.bonusLevelChance);
 				if (chanceForBonusLevel == 1)
@@ -335,7 +335,7 @@ public class ObstacleManager : MonoBehaviour {
 			Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
 
-		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.10f)
+		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.05f)
 			Instantiate (obstacle_VanillaRing_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		else
 			Instantiate (obstacle_1, spawnPoints [tempIns].gameObject.transform.position, spawnPoints [tempIns].gameObject.transform.rotation);
@@ -361,7 +361,7 @@ public class ObstacleManager : MonoBehaviour {
 			Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
 
-		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.10f)
+		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.05f)
 		{
 			Instantiate (obstacle_VanillaRing_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
@@ -411,7 +411,7 @@ public class ObstacleManager : MonoBehaviour {
 			Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
 
-		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.10f)
+		else if(randomNr == 8 || randomNr == 9 || randomNr == 10 && hugBar.fillAmount >= 0.05f)
 		{
 			Instantiate (obstacle_Big_Ring_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
@@ -454,7 +454,7 @@ public class ObstacleManager : MonoBehaviour {
 			Instantiate (obstacle_Middle_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
 
-		else if(randomNr == 9 || randomNr == 10 || randomNr == 11 && hugBar.fillAmount >= 0.10f)
+		else if(randomNr == 9 || randomNr == 10 || randomNr == 11 && hugBar.fillAmount >= 0.05f)
 		{
 			Instantiate (obstacle_Big_Ring_1, midSpawn.gameObject.transform.position, Quaternion.Euler(0, Random.Range(0, 360), 0));
 		}
