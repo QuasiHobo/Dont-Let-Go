@@ -11,11 +11,9 @@ public class CollectableController : MonoBehaviour {
 	public Color endColor = new Color32(193,60,60,1);
 
 	Camera mainCam;
-	AudioSource myAudio;
 
 	public GameObject distanceObject;
 	float startDistance;
-	float duration = 5.0f;
 	float t = 0f;
 	bool gameOver = false;
 
@@ -30,9 +28,6 @@ public class CollectableController : MonoBehaviour {
 		mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 		startColor = mainCam.backgroundColor;
 		this.gameObject.GetComponent<Renderer>().material.color = mainCam.backgroundColor;
-
-		myAudio = gameObject.AddComponent<AudioSource>();
-		myAudio.clip = Resources.Load("Sounds & Music/Sounds/WaterDrop") as AudioClip;
 			
 		gameOver = false;
 		CharCollison.OnCollision += GameOver;
@@ -57,7 +52,6 @@ public class CollectableController : MonoBehaviour {
 
 	public void WasCollected()
 	{
-		myAudio.Play();
 		StartCoroutine("WaitToDie");
 	}
 	IEnumerator WaitToDie()

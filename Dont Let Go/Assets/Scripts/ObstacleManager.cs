@@ -110,17 +110,25 @@ public class ObstacleManager : MonoBehaviour {
 		mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 		normalColor = mainCam.backgroundColor;
 
-		StartCoroutine ("Spawner");
+
 	}
 	void Awake()
 	{
 		CharCollison.OnCollision += GameOver;
 		CharCollison.OnCollision += StopSpawning;
+		GameManager.OnGameBegins += OnGameBegins;
+	}
+
+	void OnGameBegins ()
+	{
+		spawning = true;
+		StartCoroutine ("Spawner");
 	}
 	void OnDisable()
 	{
 		CharCollison.OnCollision -= GameOver;
 		CharCollison.OnCollision -= StopSpawning;
+		GameManager.OnGameBegins -= OnGameBegins;
 	}
 
 	void StopSpawning(string charNumb)
@@ -130,7 +138,7 @@ public class ObstacleManager : MonoBehaviour {
 
 	IEnumerator Spawner()
 	{
-		spawning = true;
+//		spawning = true;
 
 		while (spawning && GameManager.Instance.gameOver == false) 
 		{

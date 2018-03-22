@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviour
 	float speedFakeStart = 1f;
 	float speedFakeEnd = 85f;
 	float speedFakeRateDuration = 300f;
+	float gravityFakeRate;
 
 	//Camera STuff
 	public Animation camAnimation;
@@ -106,7 +107,7 @@ public class GameManager : MonoBehaviour
 	float startBloomIntensity;
 	float startBloomThreshold;
 	float endBloomIntensity = 0.9f;
-	float endBloomThreshold = 0.6f;
+	float endBloomThreshold = 0.8f;
 
 	//Touch UI stuff
 	public ParticleSystem rightButtonParticles;
@@ -125,22 +126,42 @@ public class GameManager : MonoBehaviour
 	//UIStuff
 	public GameObject uiParent;
 
+	//Events
+	public delegate void OnGameBeginsEvent();
+	public static event OnGameBeginsEvent OnGameBegins;
+
+	//UI STUFF
+	public Button startButton;
+	public Text startText;
+	public Text highscoreText;
+
+	public GameObject mainMusic;
+	public bool gameStarted = false;
+
+	public SkinnedMeshRenderer charRenderer1;
+	public SkinnedMeshRenderer charRenderer2;
+	public MeshRenderer heart1;
+	public MeshRenderer heart2;
+
 	// Use this for initialization
 	void Start () 
 	{
 		//OBS!!! Deleting playerprefs for testing purposes
-		PlayerPrefs.DeleteAll();
+//		PlayerPrefs.DeleteAll();
+
+		charRenderer1.enabled = false;
+		charRenderer2.enabled = false;
+		heart1.enabled = false;
+		heart2.enabled = false;
 
 		myBloom = mainCam.GetComponent<BloomOptimized>();
 		startBloomIntensity = myBloom.intensity;
 		startBloomThreshold = myBloom.threshold;
 
-		camAnimation.Play("Cam_OnStart_Anim_1");
-
 		uiParent.gameObject.SetActive(false);
-		StartCoroutine("UiRoutine");
 
 		highScore = PlayerPrefs.GetFloat ("Highscore");
+		highscoreText.text = "Highscore: "+highScore;
 		Debug.Log ("highscore: " + highScore);
 
 		//Handling particle systems
@@ -175,7 +196,55 @@ public class GameManager : MonoBehaviour
 		//Setup up UI for deathqoute
 		deathQuote.enabled = false;
 
+		StartCoroutine("StartButtonFade");
+	}
+	IEnumerator StartButtonFade()
+	{
+		startButton.interactable = false;
+		Color startColor = new Color32(0,0,0,0);
+		Color endColor = new Color32(48,46,46,215);
+		startText.color = startColor;
+		highscoreText.color = startColor;
+
+		float t = 0;
+
+		yield return new WaitForSeconds(1f);
+
+		while(t < 1)
+		{
+			t += Time.deltaTime;
+			startText.color = Color.Lerp(startColor, endColor,t);
+			highscoreText.color = Color.Lerp(startColor, endColor,t);
+			yield return null;
+		}
+
+		startButton.interactable = true;
+		t = 0;
+
+		yield return null;
+	}
+	public void StartButtonPressed()
+	{
+		StartCoroutine("GameStart");
+	}
+	IEnumerator GameStart()
+	{
+		gameStarted = true;
+		highscoreText.enabled = false;
+		startButton.gameObject.SetActive(false);
+		mainMusic.GetComponent<AudioSource>().Play();
+
+		StartCoroutine("UiRoutine");
+		camAnimation.Play("Cam_OnStart_Anim_1");
+
+		charRenderer1.enabled = true;
+		charRenderer2.enabled = true;
+		heart1.enabled = true;
+		heart2.enabled = true;
+
+		OnGameBegins();
 		StartCoroutine("GameProgression");
+		yield return null;
 	}
 	void StartHug()
 	{
@@ -295,6 +364,7 @@ public class GameManager : MonoBehaviour
 	{
 		StartCoroutine("DoBoost");
 	}
+
 	IEnumerator DoBoost()
 	{
 		boostOngoing = true;
@@ -449,36 +519,12 @@ public class GameManager : MonoBehaviour
 				}
 				yield return null;
 			}
-			t_speed = 0;
-			currentLvlNumb += 1;
+//			t_speed = 0;
+//			currentLvlNumb += 1;
 		}
 
 	}
 
-	void Update()
-	{
-		if(!gameOver)
-		{
-			if(speedFakeWait < 1)
-			{
-				speedFakeWait += Time.deltaTime / speedFakeRateDuration;
-
-				var em = speedFaking_2.emission;
-				var rate = em.rate;
-				rate.mode = ParticleSystemCurveMode.Constant;
-
-				speedFakeRate = Mathf.Lerp(speedFakeStart, speedFakeEnd, speedFakeWait);
-				rate.constantMin = speedFakeRate;
-				rate.constantMax = speedFakeRate;
-
-				em.rate = rate;
-			}
-
-			speedFaking.gravityModifier = -(gameSpeed);
-			speedFaking_2.gravityModifier = -(gameSpeed);
-//			speedFaking_2.emission.rate = 
-		}
-	}
 
 	IEnumerator GameOverState()
 	{
@@ -502,15 +548,15 @@ public class GameManager : MonoBehaviour
 		deathQuote.enabled = true;
 
 		Color startColor = new Color32(0,0,50,0);
-		Color endColor = new Color32(0,0,50,255);
+		Color endColor = new Color32(0,11,48,255);
 		deathQuote.color = startColor;
 		float t = 0;
 
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(0.5f);
 
 		while(t < 1)
 		{
-			t += Time.deltaTime/2;
+			t += Time.deltaTime;
 			deathQuote.color = Color.Lerp(startColor, endColor,t);
 			yield return null;
 		}
@@ -524,8 +570,10 @@ public class GameManager : MonoBehaviour
 			yield return null;
 		}
 		deathQuote.enabled = false;
-		restartButton.gameObject.SetActive (true);
+//		restartButton.gameObject.SetActive (true);
 		yield return null;
+		yield return new WaitForSeconds(0.1f);
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
 	}
 
 	public void RestartButtonPressed()
@@ -545,4 +593,6 @@ public class GameManager : MonoBehaviour
 			playButton.enabled = false;
 		}
 	}
+
+
 }

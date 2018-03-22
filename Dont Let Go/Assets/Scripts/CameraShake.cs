@@ -25,6 +25,9 @@ public class CameraShake : MonoBehaviour {
 		CollectDetector.OnCollectBoost += Boost;
 		ObstacleManager.OnSpecialStart += SpecialShake;
 		ObstacleManager.OnSpecialStop += StopSpecial;
+		ScoreDetector.OnCollided += PassShake;
+
+		tempShakeAmount = shakeAmount;
 
 		if (camTransform == null)
 		{
@@ -42,10 +45,17 @@ public class CameraShake : MonoBehaviour {
 		CollectDetector.OnCollectBoost -= Boost;
 		ObstacleManager.OnSpecialStart -= SpecialShake;
 		ObstacleManager.OnSpecialStop -= StopSpecial;
+		ScoreDetector.OnCollided -= PassShake;
+	}
+	void PassShake()
+	{
+		if(GameManager.Instance.boostOngoing == false && shakeAmount <= 0.8f)
+		{
+			shakeAmount *= 6f;
+		}
 	}
 	void SpecialShake()
 	{
-		tempShakeAmount = shakeAmount;
 		shakeAmount *= 1.6f;
 	}
 	void StopSpecial()
@@ -72,7 +82,7 @@ public class CameraShake : MonoBehaviour {
 	}
 	void Update()
 	{
-		if(GameManager.Instance.boostOngoing == false)
+		if(GameManager.Instance.boostOngoing == false && GameManager.Instance.gameStarted == true)
 		{
 			if (shakeDuration > 0)
 			{
@@ -85,6 +95,14 @@ public class CameraShake : MonoBehaviour {
 				shakeDuration = 0f;
 				camTransform.localPosition = originalPos;
 			}
+		}
+		if(shakeAmount > tempShakeAmount && shakeAmount < 0.15f)
+		{
+			shakeAmount -= 0.1f*Time.deltaTime;
+		}
+		else if(shakeAmount > tempShakeAmount && shakeAmount >= 0.15f)
+		{
+			shakeAmount -= 1f*Time.deltaTime;
 		}
 //		if(GameManager.Instance.boostOngoing == true && startshake)
 //		{

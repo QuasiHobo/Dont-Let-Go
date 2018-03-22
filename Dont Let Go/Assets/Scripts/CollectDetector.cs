@@ -21,12 +21,30 @@ public class CollectDetector : MonoBehaviour {
 	Color collectColor = new Color32(233,248,255,1);
 	bool colorChanging = false;
 
+	SkinnedMeshRenderer charRenderer;
+	float fresnelSpreadInit = 2.85f;
+	public float fresnelTemp;
+
+	AudioSource myAudio;
+
 	// Use this for initialization
 	void Start () 
 	{
 		collectEffect_big = Resources.Load("Prefabs/Effects/Effect_Collectable_1") as GameObject;
 		collectEffect_boost = Resources.Load("Prefabs/Effects/Effect_Collectable_2") as GameObject;
 		mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+
+		if(this.gameObject.tag == "legRot_char1")
+		{
+			charRenderer = GameObject.FindGameObjectWithTag("charMesh_1").GetComponent<SkinnedMeshRenderer>();
+		}
+		if(this.gameObject.tag == "legRot_char2")
+		{
+			charRenderer = GameObject.FindGameObjectWithTag("charMesh_2").GetComponent<SkinnedMeshRenderer>();
+		}
+		fresnelTemp = charRenderer.material.GetFloat("_FresnelSpread");
+
+		myAudio = this.gameObject.GetComponent<AudioSource>();
 	}
 	
 	void OnTriggerEnter (Collider collider)
@@ -39,6 +57,8 @@ public class CollectDetector : MonoBehaviour {
 			//Destroy (collider.gameObject);
 			OnCollect ();
 			StartCoroutine("CamCollectColor");
+			StartCoroutine("CollectEffect");
+			myAudio.Play();
 		}
 		if(collider.tag == "Collectable_Boost")
 		{
@@ -48,6 +68,8 @@ public class CollectDetector : MonoBehaviour {
 
 				if(GameManager.Instance.boostOngoing == false)
 				OnCollectBoost();
+				myAudio.Play();
+			
 		}
 		if(collider.tag == "Collectable_Big")
 		{
@@ -55,6 +77,8 @@ public class CollectDetector : MonoBehaviour {
 //			GameObject tempEffect = Instantiate(collectEffect_big, this.gameObject.transform.position, collectEffect_big.transform.rotation) as GameObject;
 //			tempEffect.transform.parent = this.gameObject.transform;
 			OnCollectBig ();
+			StartCoroutine("CollectEffect");
+			myAudio.Play();
 		}
 	}
 
@@ -80,6 +104,25 @@ public class CollectDetector : MonoBehaviour {
 				yield return null;
 			}
 			colorChanging = false;
+		}
+		yield return null;
+	}
+
+	void Update()
+	{
+		if(fresnelTemp < fresnelSpreadInit)
+		{
+			fresnelTemp += 3.5f*Time.deltaTime;
+		}
+
+		charRenderer.material.SetFloat("_FresnelSpread", fresnelTemp);
+	}
+
+	IEnumerator CollectEffect()
+	{
+		if(fresnelTemp > 1.25)
+		{
+			fresnelTemp -= 1f;
 		}
 		yield return null;
 	}
