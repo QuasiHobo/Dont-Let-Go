@@ -56,8 +56,9 @@ public class CollectableController : MonoBehaviour {
 	}
 	IEnumerator WaitToDie()
 	{
-		yield return new WaitForSeconds (1.5f);
-		Destroy(this.gameObject);
+		//yield return new WaitForSeconds (1.5f);
+//		Destroy(this.gameObject);
+		yield return null;
 	}
 	
 	// Update is called once per frame

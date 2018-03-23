@@ -49,7 +49,7 @@ public class ScoreDetector : MonoBehaviour {
 	
 	void Collected()
 	{
-		totalScore += collectableValue;
+		totalScore += collectableValue*GameManager.Instance.currentLevel;
 		scoreText.text = "" + totalScore;
 	}
 	void BoostCollected()
@@ -58,14 +58,14 @@ public class ScoreDetector : MonoBehaviour {
 	}
 	void BigCollected()
 	{
-		totalScore += collectableBigValue;
+		totalScore += collectableBigValue*GameManager.Instance.currentLevel;;
 		scoreText.text = "" + totalScore;
 	}
 	IEnumerator BoostScore()
 	{
 		while(GameManager.Instance.boostOngoing)
 		{
-			totalScore += 1;
+			totalScore += 1*GameManager.Instance.currentLevel;;
 			scoreText.text = "" + totalScore;
 			yield return new WaitForSeconds(0.05f);
 			yield return null;
@@ -78,7 +78,7 @@ public class ScoreDetector : MonoBehaviour {
 			if (collider.gameObject.GetComponent<ObstacleController> () != null) 
 			{
 				OnCollided();
-				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore;
+				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore*GameManager.Instance.currentLevel;;
 				scoreText.gameObject.GetComponent<Animation> ().Play ();
 				scoreText.text = "" + totalScore;
 

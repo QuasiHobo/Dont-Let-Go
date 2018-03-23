@@ -6,7 +6,23 @@ using UnityEngine.UI;
 
 public class RotatorManager : MonoBehaviour {
 		
-	float touchSpeed = 14f; //16-18 for mobile builds
+	// Singleton
+	private static RotatorManager instance;
+	// Construct
+	private RotatorManager ()
+	{
+	}
+	// Instance
+	public static RotatorManager Instance {
+		get {
+			if (instance == null)
+				instance = GameObject.FindObjectOfType (typeof(RotatorManager)) as RotatorManager;
+
+			return instance;
+		}
+	}
+		
+	float touchSpeed = 20f; //16-18 for mobile builds
 
 	Rigidbody myRB;
 	bool leftMovePressed = false;
@@ -22,6 +38,9 @@ public class RotatorManager : MonoBehaviour {
 	public Image hugbar_Left;
 	public float hugDuration = 2f;
 	float hugRegeneration = 85f;
+
+	Color hugBarColor_Start = new Color32(98,191,223,255);
+	Color hugBarColor_Collect = new Color32(189,238,255,255);
 
 	int tapAmount = 0;
 
@@ -42,13 +61,15 @@ public class RotatorManager : MonoBehaviour {
 		tapAmount = 0;
 		heartStartColor = char1Heart.material.color;
 		myRB = this.GetComponent<Rigidbody> ();
-		hugbar_Right.fillAmount = 0f;
-		hugbar_Left.fillAmount = 0f;
+		hugbar_Right.fillAmount = 1f;
+		hugbar_Left.fillAmount = 1f;
 	}
 
 	void OnDisable()
 	{
 		CollectDetector.OnCollectBoost -= BoostStarted;
+		CollectDetector.OnCollect -= HugCollectSmall;
+		CollectDetector.OnCollectBig -= HugCollectBig;
 	}
 	void BoostStarted()
 	{
@@ -56,13 +77,24 @@ public class RotatorManager : MonoBehaviour {
 	}
 	void HugCollectSmall()
 	{
-		hugbar_Right.fillAmount += 0.015f;
-		hugbar_Left.fillAmount += 0.015f;
+		hugbar_Right.fillAmount += 0.025f;
+		hugbar_Left.fillAmount += 0.025f;
+		StartCoroutine("ChangeFillbar");
 	}
 	void HugCollectBig()
 	{
 		hugbar_Right.fillAmount += 0.1f;
 		hugbar_Left.fillAmount += 0.1f;
+		StartCoroutine("ChangeFillbar");
+	}
+	IEnumerator ChangeFillbar()
+	{
+		hugbar_Left.color = hugBarColor_Collect;
+		hugbar_Right.color = hugBarColor_Collect;
+		yield return new WaitForSeconds(0.15f);
+		hugbar_Left.color = hugBarColor_Start;
+		hugbar_Right.color = hugBarColor_Start;
+		yield return null;
 	}
 	void Update()
 	{

@@ -10,6 +10,7 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Obstacle_Big_2
+    4300002: Obstacle_Big_2_new
   materials:
     importMaterials: 0
     materialName: 0

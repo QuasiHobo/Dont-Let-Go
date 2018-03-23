@@ -60,6 +60,7 @@ public class CollectDetector : MonoBehaviour {
 				OnCollect ();
 				StartCoroutine("CamCollectColor");
 				StartCoroutine("CollectEffect");
+				Destroy(collider.gameObject);
 				myAudio.Play();
 			}
 			if(collider.tag == "Collectable_Boost")
@@ -70,7 +71,7 @@ public class CollectDetector : MonoBehaviour {
 
 				if(GameManager.Instance.boostOngoing == false)
 				OnCollectBoost();
-				myAudio.Play();
+				//myAudio.Play();
 			
 			}
 			if(collider.tag == "Collectable_Big")
@@ -80,6 +81,7 @@ public class CollectDetector : MonoBehaviour {
 //			tempEffect.transform.parent = this.gameObject.transform;
 				OnCollectBig ();
 				StartCoroutine("CollectEffect");
+				Destroy(collider.gameObject);
 				myAudio.Play();
 			}
 		}

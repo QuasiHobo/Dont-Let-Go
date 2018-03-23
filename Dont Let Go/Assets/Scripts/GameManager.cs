@@ -59,6 +59,12 @@ public class GameManager : MonoBehaviour
 	public float endSpeedDuration_4 = 60;
 	float startSpawnTime_4 = 2.5f;
 	public float endSpawnTime_4 = 1f;
+	//lvl 5
+	float startSpeed_5 = 5;
+	public float endSpeed_5 = 20;
+	public float endSpeedDuration_5 = 120;
+	float startSpawnTime_5 = 2.5f;
+	public float endSpawnTime_5 = 1f;
 
 
 	float t_speed = 0;
@@ -134,6 +140,7 @@ public class GameManager : MonoBehaviour
 	public Button startButton;
 	public Text startText;
 	public Text highscoreText;
+	public GameObject mainMenuUI;
 
 	public GameObject mainMusic;
 	public bool gameStarted = false;
@@ -143,14 +150,48 @@ public class GameManager : MonoBehaviour
 	public MeshRenderer heart1;
 	public MeshRenderer heart2;
 
-	public GameObject charParent1;
-	public GameObject charParent2;
+	public int currentLevel;
+	float levelProgress;
+	float levelTier = 1.2f;
+	float startXPrequired = 50f;
+	float xpRequired;
+
+	public Image levelProgressBar;
+	public Image LevelProgressBarRun;
+	public Text currentLevelText;
+	public Text currentLevelTextRun;
+	public Text scoreMultiplierText;
 
 	// Use this for initialization
 	void Start () 
 	{
 		//OBS!!! Deleting playerprefs for testing purposes
-//		PlayerPrefs.DeleteAll();
+//  		PlayerPrefs.DeleteAll();
+
+		// PLAYERPREFS STARTS
+		highScore = PlayerPrefs.GetFloat ("Highscore");
+		highscoreText.text = ""+highScore;
+		Debug.Log ("highscore: " + highScore);
+
+		currentLevel = PlayerPrefs.GetInt ("CurrentLevel");
+		levelProgress = PlayerPrefs.GetFloat ("LevelProgress");
+		xpRequired = PlayerPrefs.GetFloat ("XpRequired");
+		if(currentLevel == 0)
+		{
+			currentLevel += 1;
+		}
+		if(xpRequired == 0)
+		{
+			xpRequired = startXPrequired;
+		}
+
+		levelProgressBar.fillAmount = levelProgress;
+		LevelProgressBarRun.fillAmount = levelProgress;
+		currentLevelText.text = "Level "+(currentLevel);
+		currentLevelTextRun.text = "Level "+(currentLevel);
+		scoreMultiplierText.text = "X"+(currentLevel);
+
+		//// Playerprefs End
 
 		charRenderer1.enabled = false;
 		charRenderer2.enabled = false;
@@ -162,10 +203,7 @@ public class GameManager : MonoBehaviour
 		startBloomThreshold = myBloom.threshold;
 
 		uiParent.gameObject.SetActive(false);
-
-		highScore = PlayerPrefs.GetFloat ("Highscore");
-		highscoreText.text = "Highscore: "+highScore;
-		Debug.Log ("highscore: " + highScore);
+		mainMenuUI.gameObject.SetActive(true);
 
 		//Handling particle systems
 		ParticleSystem.EmissionModule em = speedFaking.emission;
@@ -201,13 +239,24 @@ public class GameManager : MonoBehaviour
 
 		StartCoroutine("StartButtonFade");
 	}
+	void OnDisable()
+	{
+		CharCollison.OnCollision -= GameOver; 
+		CollectDetector.OnCollect -= Collected;
+		CollectDetector.OnCollectBoost -= BoostCollected;
+		CollectDetector.OnCollectBig -= BigCollected;
+		ScoreDetector.OnCollided -= AfterBoostCollided;
+		ObstacleManager.OnSpecialStart -= SpecialLevelStarted;
+		ObstacleManager.OnSpecialStop -= SpecialLevelStopped;
+		RotatorManager.OnHug -= StartHug;
+		RotatorManager.OnStopHug -= StopHug;
+	}
 	IEnumerator StartButtonFade()
 	{
 		startButton.interactable = false;
 		Color startColor = new Color32(0,0,0,0);
 		Color endColor = new Color32(48,46,46,215);
 		startText.color = startColor;
-		highscoreText.color = startColor;
 
 		float t = 0;
 
@@ -217,7 +266,6 @@ public class GameManager : MonoBehaviour
 		{
 			t += Time.deltaTime;
 			startText.color = Color.Lerp(startColor, endColor,t);
-			highscoreText.color = Color.Lerp(startColor, endColor,t);
 			yield return null;
 		}
 
@@ -284,22 +332,10 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator UiRoutine()
 	{
+		mainMenuUI.gameObject.SetActive(false);
 		yield return new WaitForSeconds (1.5f);
 		uiParent.gameObject.SetActive(true);
 		yield return null;
-	}
-
-	void OnDisable()
-	{
-		CharCollison.OnCollision -= GameOver; 
-		CollectDetector.OnCollect -= Collected;
-		CollectDetector.OnCollectBoost -= BoostCollected;
-		CollectDetector.OnCollectBig -= BigCollected;
-		ScoreDetector.OnCollided -= AfterBoostCollided;
-		ObstacleManager.OnSpecialStart -= SpecialLevelStarted;
-		ObstacleManager.OnSpecialStop -= SpecialLevelStopped;
-		RotatorManager.OnHug -= StartHug;
-		RotatorManager.OnStopHug -= StopHug;
 	}
 	void SpecialLevelStarted()
 	{
@@ -354,11 +390,32 @@ public class GameManager : MonoBehaviour
 	}
 	void Collected()
 	{
+		levelProgress += 1/xpRequired;
+		LevelProgressBarRun.fillAmount = levelProgress;
+
+		if(levelProgress > 1)
+		{
+			LevelUp();
+			levelProgress = 0;
+			LevelProgressBarRun.fillAmount = 0;
+		}
+
 		amountCollected += collectReward;
 		amountCollected_text.text = "" + amountCollected;
 	}
+		
 	void BigCollected()
 	{
+		levelProgress += 1/xpRequired;
+		LevelProgressBarRun.fillAmount = levelProgress;
+
+		if(levelProgress > 1)
+		{
+			LevelUp();
+			levelProgress = 0;
+			LevelProgressBarRun.fillAmount = 0;
+		}
+
 		amountCollected += collectReward_Big;
 		amountCollected_text.gameObject.GetComponent<Animation>().Play();
 		amountCollected_text.text = "" + amountCollected;
@@ -366,6 +423,18 @@ public class GameManager : MonoBehaviour
 	void BoostCollected()
 	{
 		StartCoroutine("DoBoost");
+	}
+
+	void LevelUp()
+	{
+		xpRequired *= levelTier;
+		currentLevel += 1;
+		currentLevelTextRun.text = "Level "+currentLevel;
+		scoreMultiplierText.text = "X"+currentLevel;
+
+		PlayerPrefs.SetInt("CurrentLevel", currentLevel);
+		PlayerPrefs.SetFloat("LevelProgress", levelProgress);
+		PlayerPrefs.SetFloat("XpRequired", xpRequired);
 	}
 
 	IEnumerator DoBoost()
@@ -522,6 +591,25 @@ public class GameManager : MonoBehaviour
 				}
 				yield return null;
 			}
+			t_speed = 0;
+			currentLvlNumb += 1;
+		}
+		if(currentLvlNumb == 5)
+		{
+			startSpeed_5 = gameSpeed;
+			startSpawnTime_5 = spawnTime;
+
+			while (t_speed < 1)
+			{
+				if(!boostOngoing && !specialLevelGoing)
+				{
+					t_speed += Time.deltaTime / endSpeedDuration_5;
+					gameSpeed = Mathf.Lerp (startSpeed_5, endSpeed_5, t_speed);
+					spawnTime = Mathf.Lerp (startSpawnTime_5, endSpawnTime_5, t_speed);
+					yield return null;
+				}
+				yield return null;
+			}
 //			t_speed = 0;
 //			currentLvlNumb += 1;
 		}
@@ -531,6 +619,10 @@ public class GameManager : MonoBehaviour
 
 	IEnumerator GameOverState()
 	{
+		PlayerPrefs.SetInt("CurrentLevel", currentLevel);
+		PlayerPrefs.SetFloat("LevelProgress", levelProgress);
+		PlayerPrefs.SetFloat("XpRequired", xpRequired);
+
 		uiParent.gameObject.SetActive(false);
 		endScore = ScoreDetector.Instance.totalScore;
 
