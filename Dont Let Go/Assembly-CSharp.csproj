@@ -67,6 +67,7 @@
      <Compile Include="Assets\Scripts\ObstacleController.cs" />
      <Compile Include="Assets\Scripts\ObstacleDetector.cs" />
      <Compile Include="Assets\Scripts\ObstacleManager.cs" />
+     <Compile Include="Assets\Scripts\ObstacleRotator.cs" />
      <Compile Include="Assets\Scripts\RagdollManager.cs" />
      <Compile Include="Assets\Scripts\RotatorManager.cs" />
      <Compile Include="Assets\Scripts\ScoreDetector.cs" />

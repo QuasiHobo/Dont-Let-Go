@@ -23,8 +23,8 @@ public class ScoreDetector : MonoBehaviour {
 	public Text scoreText;
 	public float totalScore;
 
-	float collectableValue = 3;
-	float collectableBigValue = 25;
+	float collectableValue = 1;
+	float collectableBigValue = 15;
 
 	public delegate void OnCollidedEvent();
 	public static event OnCollidedEvent OnCollided;
@@ -49,7 +49,8 @@ public class ScoreDetector : MonoBehaviour {
 	
 	void Collected()
 	{
-		totalScore += collectableValue*GameManager.Instance.currentLevel;
+//		totalScore += collectableValue*GameManager.Instance.currentLevel;
+		totalScore += collectableValue;
 		scoreText.text = "" + totalScore;
 	}
 	void BoostCollected()
@@ -58,14 +59,16 @@ public class ScoreDetector : MonoBehaviour {
 	}
 	void BigCollected()
 	{
-		totalScore += collectableBigValue*GameManager.Instance.currentLevel;;
+//		totalScore += collectableBigValue*GameManager.Instance.currentLevel;
+		totalScore += collectableBigValue;
 		scoreText.text = "" + totalScore;
 	}
 	IEnumerator BoostScore()
 	{
 		while(GameManager.Instance.boostOngoing)
 		{
-			totalScore += 1*GameManager.Instance.currentLevel;;
+//			totalScore += 1*GameManager.Instance.currentLevel;
+			totalScore += 1;
 			scoreText.text = "" + totalScore;
 			yield return new WaitForSeconds(0.05f);
 			yield return null;
@@ -78,7 +81,8 @@ public class ScoreDetector : MonoBehaviour {
 			if (collider.gameObject.GetComponent<ObstacleController> () != null) 
 			{
 				OnCollided();
-				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore*GameManager.Instance.currentLevel;;
+//				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore*GameManager.Instance.currentLevel;
+				totalScore += collider.gameObject.GetComponent<ObstacleController> ().obstacleScore;
 				scoreText.gameObject.GetComponent<Animation> ().Play ();
 				scoreText.text = "" + totalScore;
 

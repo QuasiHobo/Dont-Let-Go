@@ -136,6 +136,9 @@ public class GameManager : MonoBehaviour
 	public delegate void OnGameBeginsEvent();
 	public static event OnGameBeginsEvent OnGameBegins;
 
+	public delegate void OnBoostEndsEvent();
+	public static event OnBoostEndsEvent OnBoostEnds;
+
 	//UI STUFF
 	public Button startButton;
 	public Text startText;
@@ -490,6 +493,7 @@ public class GameManager : MonoBehaviour
 		}
 
 		camAnimation.Play("Cam_BoostEnd_Anim_1");
+		OnBoostEnds();
 
 		while(t < 1)
 		{
@@ -647,27 +651,27 @@ public class GameManager : MonoBehaviour
 		deathQuote.color = startColor;
 		float t = 0;
 
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(2.0f);
 
-		while(t < 1)
-		{
-			t += Time.deltaTime;
-			deathQuote.color = Color.Lerp(startColor, endColor,t);
-			yield return null;
-		}
-
-		t = 0;
-		yield return new WaitForSeconds(0.35f);
-		while(t < 1)
-		{
-			t += Time.deltaTime;
-			deathQuote.color = Color.Lerp(endColor,startColor,t);
-			yield return null;
-		}
-		deathQuote.enabled = false;
-//		restartButton.gameObject.SetActive (true);
-		yield return null;
-		yield return new WaitForSeconds(0.1f);
+//		while(t < 1)
+//		{
+//			t += Time.deltaTime;
+//			deathQuote.color = Color.Lerp(startColor, endColor,t);
+//			yield return null;
+//		}
+//
+//		t = 0;
+//		yield return new WaitForSeconds(0.35f);
+//		while(t < 1)
+//		{
+//			t += Time.deltaTime;
+//			deathQuote.color = Color.Lerp(endColor,startColor,t);
+//			yield return null;
+//		}
+//		deathQuote.enabled = false;
+////		restartButton.gameObject.SetActive (true);
+//		yield return null;
+//		yield return new WaitForSeconds(0.1f);
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
 	}
 
