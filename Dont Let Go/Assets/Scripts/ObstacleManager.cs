@@ -37,6 +37,7 @@ public class ObstacleManager : MonoBehaviour {
 	public GameObject obstacle_PikeBall_1;
 	public GameObject obstacle_PikeBall_2;
 	public GameObject obstacle_SinglePikeBall_1;
+	public GameObject obstacle_SinglePikeBall_Small_1;
 	public GameObject obstacle_VanillaRing_1;
 	public GameObject obstacle_Big_Rot_Fast_1;
 	public GameObject obstacle_Big_Rot_Fast_2;
@@ -89,6 +90,7 @@ public class ObstacleManager : MonoBehaviour {
 		obstacle_PikeBall_1 = Resources.Load("Prefabs/Obstacles/Obstacle_PikeBall_1") as GameObject;
 		obstacle_PikeBall_2 = Resources.Load("Prefabs/Obstacles/Obstacle_PikeBall_2") as GameObject;
 		obstacle_SinglePikeBall_1 = Resources.Load("Prefabs/Obstacles/Obstacle_SinglePikeBall_1") as GameObject;
+		obstacle_SinglePikeBall_Small_1 = Resources.Load("Prefabs/Obstacles/Obstacle_SinglePikeBall_Small_1") as GameObject;
 		obstacle_VanillaRing_1 = Resources.Load("Prefabs/Obstacles/Obstacle_VanillaRing_1") as GameObject;
 		obstacle_Big_Rot_Fast_1 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_Rot_fast_1") as GameObject;
 		obstacle_Big_Rot_Fast_2 = Resources.Load("Prefabs/Obstacles/Obstacle_Big_Rot_fast_2") as GameObject;
@@ -250,17 +252,32 @@ public class ObstacleManager : MonoBehaviour {
 
 			if(GameManager.Instance.gameOver == false)
 			{
-				int specialCheck = Random.Range(0, 16);
-				if(specialCheck == 1 && GameManager.Instance.boostOngoing == false && startCheck > 10)
+				int specialCheck = Random.Range(0, 15); //16
+				if(specialCheck == 1 && GameManager.Instance.boostOngoing == false && startCheck > 12)
 				{
 					spawningSpecial = true;
+					yield return new WaitForSeconds (1.2f);
 
+					if(GameManager.Instance.currentLvlNumb == 1)
+					{
 						int ranCheck = Random.Range(1, 3);
-						Debug.Log("LOL: "+ranCheck);
 						if(ranCheck == 1)
 							StartCoroutine("SpawnSpecial_1");
 						if(ranCheck == 2)
 							StartCoroutine("SpawnSpecial_2");
+					}
+					else
+					{
+						int ranCheck = Random.Range(1, 5);
+						if(ranCheck == 1)
+							StartCoroutine("SpawnSpecial_1");
+						if(ranCheck == 2)
+							StartCoroutine("SpawnSpecial_2");
+						if(ranCheck == 3)
+							StartCoroutine("SpawnSpecial_3");
+						if(ranCheck == 4)
+							StartCoroutine("SpawnSpecial_4");
+					}
 					
 				}
 				else
@@ -282,7 +299,7 @@ public class ObstacleManager : MonoBehaviour {
 
 	IEnumerator SpawnSpecial_1()
 	{
-		yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(1.25f);
 	
 		ParticleSystem.EmissionModule em = speedFake_2.emission;
 		em.enabled = false;
@@ -358,7 +375,7 @@ public class ObstacleManager : MonoBehaviour {
 	}
 	IEnumerator SpawnSpecial_2()
 	{
-		yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(1.25f);
 
 		ParticleSystem.EmissionModule em = speedFake_2.emission;
 		em.enabled = false;
@@ -450,6 +467,166 @@ public class ObstacleManager : MonoBehaviour {
 		yield return null;
 	}
 
+	IEnumerator SpawnSpecial_3()
+	{
+		yield return new WaitForSeconds(1.25f);
+
+		ParticleSystem.EmissionModule em = speedFake_2.emission;
+		em.enabled = false;
+		ParticleSystem.EmissionModule em_2 = specialEffect_1.emission;
+		em_2.enabled = true;
+
+		int spawnDirectionSpecial = Random.Range(0, 2);
+		float t = 0;
+		OnSpecialStart();
+
+		int tempInt = Random.Range(1, 4);
+		Color tempColor = specialColor_1;
+		if(tempInt == 1)
+			tempColor = specialColor_1;
+		if(tempInt == 2)
+			tempColor = specialColor_2;
+		if(tempInt == 3)
+			tempColor = specialColor_3;
+
+		while(t < 1)
+		{
+			t += Time.deltaTime / 2f;
+			mainCam.backgroundColor = Color.Lerp(normalColor, tempColor, t);
+			yield return null;
+		}
+
+		int spawnAmount = 0;
+		int tempPoint = Random.Range(0, spawnPoints.Count);
+		int maxSpawnAmount = Random.Range(10, 18);
+
+		while(spawningSpecial && GameManager.Instance.gameOver == false && spawning == true)
+		{
+				if(spawnDirectionSpecial == 0)
+				{
+					tempPoint += 1;
+				}
+				if (spawnDirectionSpecial == 1)
+				{
+					tempPoint -= 1;
+				}
+
+			if (tempPoint == spawnPoints.Count && spawnDirectionSpecial == 0)
+					tempPoint = 0;
+			if (tempPoint < 0 && spawnDirectionSpecial == 1)
+					tempPoint = spawnPoints.Count-1;
+
+			Instantiate (obstacle_SinglePikeBall_Small_1, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
+
+
+				spawnAmount += 1;
+
+				if (spawnAmount == maxSpawnAmount)
+				spawningSpecial = false;
+
+			yield return new WaitForSeconds(0.25f);
+			
+		}
+
+		t = 0;
+		yield return new WaitForSeconds(1);
+
+		if(GameManager.Instance.gameOver == false)
+		{
+			em.enabled = true;
+		}
+
+		em_2.enabled = false;
+
+		OnSpecialStop();
+		while(t < 1)
+		{
+			t += Time.deltaTime / 2f;
+			mainCam.backgroundColor = Color.Lerp(tempColor, normalColor, t);
+			yield return null;
+		}
+		yield return null;
+	}
+	IEnumerator SpawnSpecial_4()
+	{
+		yield return new WaitForSeconds(1.25f);
+
+		ParticleSystem.EmissionModule em = speedFake_2.emission;
+		em.enabled = false;
+		ParticleSystem.EmissionModule em_2 = specialEffect_1.emission;
+		em_2.enabled = true;
+
+		int spawnDirectionSpecial = Random.Range(0, 2);
+		float t = 0;
+		OnSpecialStart();
+
+		int tempInt = Random.Range(1, 4);
+		Color tempColor = specialColor_1;
+		if(tempInt == 1)
+			tempColor = specialColor_1;
+		if(tempInt == 2)
+			tempColor = specialColor_2;
+		if(tempInt == 3)
+			tempColor = specialColor_3;
+
+		while(t < 1)
+		{
+			t += Time.deltaTime / 2f;
+			mainCam.backgroundColor = Color.Lerp(normalColor, tempColor, t);
+			yield return null;
+		}
+
+		int spawnAmount = 0;
+		int tempPoint = Random.Range(0, spawnPoints.Count);
+		int maxSpawnAmount = Random.Range(10, 18);
+
+		while(spawningSpecial && GameManager.Instance.gameOver == false && spawning == true)
+		{
+			if(spawnDirectionSpecial == 0)
+			{
+				tempPoint += 1;
+			}
+			if (spawnDirectionSpecial == 1)
+			{
+				tempPoint -= 1;
+			}
+
+			if (tempPoint == spawnPoints.Count && spawnDirectionSpecial == 0)
+				tempPoint = 0;
+			if (tempPoint < 0 && spawnDirectionSpecial == 1)
+				tempPoint = spawnPoints.Count-1;
+
+			Instantiate (obstacle_1, spawnPoints [tempPoint].gameObject.transform.position, spawnPoints [tempPoint].gameObject.transform.rotation);
+
+
+			spawnAmount += 1;
+
+			if (spawnAmount == maxSpawnAmount)
+				spawningSpecial = false;
+
+			yield return new WaitForSeconds(0.45f);
+
+		}
+
+		t = 0;
+		yield return new WaitForSeconds(1);
+
+		if(GameManager.Instance.gameOver == false)
+		{
+			em.enabled = true;
+		}
+
+		em_2.enabled = false;
+
+		OnSpecialStop();
+		while(t < 1)
+		{
+			t += Time.deltaTime / 2f;
+			mainCam.backgroundColor = Color.Lerp(tempColor, normalColor, t);
+			yield return null;
+		}
+		yield return null;
+	}
 	IEnumerator SpawnLevel_1(int spawnDirection)
 	{
 		int tempIns = Random.Range (1, spawnPoints.Count);	

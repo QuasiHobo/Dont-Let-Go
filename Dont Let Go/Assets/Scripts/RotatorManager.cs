@@ -77,8 +77,8 @@ public class RotatorManager : MonoBehaviour {
 	}
 	void HugCollectSmall()
 	{
-		hugbar_Right.fillAmount += 0.015f;
-		hugbar_Left.fillAmount += 0.015f;
+		hugbar_Right.fillAmount += 0.02f;
+		hugbar_Left.fillAmount += 0.02f;
 		StartCoroutine("ChangeFillbar");
 	}
 	void HugCollectBig()

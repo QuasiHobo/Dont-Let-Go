@@ -62,7 +62,7 @@ public class RagdollManager : MonoBehaviour {
 				go.GetComponent<Collider> ().isTrigger = false;
 				go.GetComponent<Collider> ().enabled = true;
 
-				float colStrength = 110f;
+				float colStrength = 350f;
 				if (charNumb == "Char1_fys")
 					go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
 			}

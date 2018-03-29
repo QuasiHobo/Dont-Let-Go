@@ -153,6 +153,9 @@ public class GameManager : MonoBehaviour
 	public MeshRenderer heart1;
 	public MeshRenderer heart2;
 
+	public GameObject char1;
+	public GameObject char2;
+
 	public int currentLevel;
 	float levelProgress;
 	float levelTier = 1.2f;
@@ -267,7 +270,7 @@ public class GameManager : MonoBehaviour
 
 		while(t < 1)
 		{
-			t += Time.deltaTime;
+			t += Time.deltaTime/1.5f;
 			startText.color = Color.Lerp(startColor, endColor,t);
 			yield return null;
 		}
@@ -296,8 +299,17 @@ public class GameManager : MonoBehaviour
 		heart1.enabled = true;
 		heart2.enabled = true;
 
+		StartCoroutine("CharMeet");
+
 		OnGameBegins();
 		StartCoroutine("GameProgression");
+		yield return null;
+	}
+	IEnumerator CharMeet()
+	{
+		yield return new WaitForSeconds(0.5f);
+		char1.gameObject.GetComponent<Animation>().Play();
+		char2.gameObject.GetComponent<Animation>().Play();
 		yield return null;
 	}
 	void StartHug()
@@ -343,18 +355,54 @@ public class GameManager : MonoBehaviour
 	void SpecialLevelStarted()
 	{
 		StartCoroutine("SpecialLevelInit");
+		StartCoroutine("SpecialLevelChars");
+	}
+	IEnumerator SpecialLevelChars()
+	{
+		float t = 0;
+		float startPos = 2.35f;
+		float tempPos;
+
+		while(t < 1)
+		{
+			t += Time.deltaTime/0.5f;
+			tempPos = Mathf.Lerp(2.35f, 4f, t);
+			char1.transform.localPosition = new Vector3(0,0,tempPos);
+			char2.transform.localPosition = new Vector3(0,0,-tempPos);
+			yield return null;
+		}
+		t = 0;
+		yield return new WaitForSeconds(0.25f);
+		while(t < 1)
+		{
+			t += Time.deltaTime/0.5f;
+			tempPos = Mathf.Lerp(4f, 1.8f, t);
+			char1.transform.localPosition = new Vector3(0,0,tempPos);
+			char2.transform.localPosition = new Vector3(0,0,-tempPos);
+			yield return null;
+		}
+		t= 0;
+		while(t < 1)
+		{
+			t += Time.deltaTime/0.25f;
+			tempPos = Mathf.Lerp(1.8f, 2.35f, t);
+			char1.transform.localPosition = new Vector3(0,0,tempPos);
+			char2.transform.localPosition = new Vector3(0,0,-tempPos);
+			yield return null;
+		}
 	}
 	IEnumerator SpecialLevelInit()
 	{
 		specialLevelGoing = true;
 		tempGameSpeed = gameSpeed;
+		float specialGameSpeed = tempGameSpeed+4f;
 		float t = 0;
-		if(gameSpeed < 23)
+		if(gameSpeed <= 26)
 		{
 			while(t < 1)
 			{
 				t += Time.deltaTime / 2f;
-				gameSpeed = Mathf.Lerp(tempGameSpeed, 23, t);
+				gameSpeed = Mathf.Lerp(tempGameSpeed, specialGameSpeed, t);
 				yield return null;
 			}
 		}
@@ -368,7 +416,7 @@ public class GameManager : MonoBehaviour
 	{
 		float t = 0;
 		float newTempSpeed = gameSpeed;
-		if(tempGameSpeed < 23)
+		if(tempGameSpeed <= 26)
 		{
 			while(t < 1)
 			{
@@ -651,7 +699,7 @@ public class GameManager : MonoBehaviour
 		deathQuote.color = startColor;
 		float t = 0;
 
-		yield return new WaitForSeconds(2.0f);
+		yield return new WaitForSeconds(4f);
 
 //		while(t < 1)
 //		{

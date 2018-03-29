@@ -23,8 +23,8 @@ public class ScoreDetector : MonoBehaviour {
 	public Text scoreText;
 	public float totalScore;
 
-	float collectableValue = 1;
-	float collectableBigValue = 15;
+	float collectableValue = 3;
+	float collectableBigValue = 25;
 
 	public delegate void OnCollidedEvent();
 	public static event OnCollidedEvent OnCollided;
