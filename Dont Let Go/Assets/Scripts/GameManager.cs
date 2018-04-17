@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityStandardAssets.ImageEffects;
+using UnityEngine.Advertisements;
 
 public class GameManager : MonoBehaviour 
 {
@@ -171,8 +172,6 @@ public class GameManager : MonoBehaviour
 	public Text currentLevelTextRun;
 	public Text scoreMultiplierText;
 
-	bool adIsShowing = false;
-
 	// Use this for initialization
 	void Start () 
 	{
@@ -244,7 +243,7 @@ public class GameManager : MonoBehaviour
 		ObstacleManager.OnSpecialStop += SpecialLevelStopped;
 		RotatorManager.OnHug += StartHug;
 		RotatorManager.OnStopHug += StopHug;
-		AdManager.OnAdEnded += AdEnded;
+//		AdManager.OnAdEnded += AdEnded;
 
 		//Setup up UI for deathqoute
 		deathQuote.enabled = false;
@@ -262,7 +261,7 @@ public class GameManager : MonoBehaviour
 		ObstacleManager.OnSpecialStop -= SpecialLevelStopped;
 		RotatorManager.OnHug -= StartHug;
 		RotatorManager.OnStopHug -= StopHug;
-		AdManager.OnAdEnded -= AdEnded;
+//		AdManager.OnAdEnded -= AdEnded;
 	}
 	IEnumerator StartButtonFade()
 	{
@@ -716,39 +715,8 @@ public class GameManager : MonoBehaviour
 
 		yield return new WaitForSeconds(4f);
 
-//		while(t < 1)
-//		{
-//			t += Time.deltaTime;
-//			deathQuote.color = Color.Lerp(startColor, endColor,t);
-//			yield return null;
-//		}
-//
-//		t = 0;
-//		yield return new WaitForSeconds(0.35f);
-//		while(t < 1)
-//		{
-//			t += Time.deltaTime;
-//			deathQuote.color = Color.Lerp(endColor,startColor,t);
-//			yield return null;
-//		}
-//		deathQuote.enabled = false;
-////		restartButton.gameObject.SetActive (true);
-//		yield return null;
-//		yield return new WaitForSeconds(0.1f);
-
-		OnShowSimpleAd();
-
-		adIsShowing = true;
-
-		while(adIsShowing)
-			yield return null;
-
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
-	}
-
-	void AdEnded()
-	{
-		adIsShowing = false;
+		OnShowSimpleAd();
 	}
 
 	public void RestartButtonPressed()

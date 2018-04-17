@@ -7,9 +7,9 @@ using UnityEngine.Advertisements;
 public class AdManager : MonoBehaviour {
 
 	#if UNITY_IOS
-	private string gameId = "1771708";
+	[SerializeField] string gameID = "1771708";
 	#elif UNITY_ANDROID
-	private string gameId = "1771707";
+	[SerializeField] string gameID = "1771707";
 	#endif
 
 	//events
@@ -37,13 +37,12 @@ public class AdManager : MonoBehaviour {
 	{
 		while(!Advertisement.IsReady())
 			yield return null;
-
+		
+		int randomNr = Random.Range(1, 4);
+		Debug.Log("random nr: "+randomNr);
+		if(randomNr == 1)
 		Advertisement.Show();
 
-		while(Advertisement.isShowing)
-			yield return null;
-
-		OnAdEnded();
 	}
 
 }
