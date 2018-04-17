@@ -50,6 +50,12 @@ public class RotatorManager : MonoBehaviour {
 	public delegate void OnStopHugEvent();
 	public static event OnStopHugEvent OnStopHug;
 
+	public Button moveLeft;
+	public Button moveRight;
+
+	Color pressedColor;
+	Color normalColor;
+
 
 	void Start () 
 	{
@@ -63,6 +69,9 @@ public class RotatorManager : MonoBehaviour {
 		myRB = this.GetComponent<Rigidbody> ();
 		hugbar_Right.fillAmount = 1f;
 		hugbar_Left.fillAmount = 1f;
+
+		pressedColor = moveLeft.colors.pressedColor;
+		normalColor = moveLeft.colors.normalColor;
 	}
 
 	void OnDisable()
@@ -116,9 +125,13 @@ public class RotatorManager : MonoBehaviour {
 
 		//For testing on PC
 		if(Input.GetKeyDown(KeyCode.LeftArrow))
+		{
 			LeftButtonPressedDown();
+		}
 		if(Input.GetKeyDown(KeyCode.RightArrow))
+		{
 			RightButtonPressedDown();
+		}
 		if(Input.GetKeyUp(KeyCode.LeftArrow))
 			LeftButtonPressedUp();
 		if(Input.GetKeyUp(KeyCode.RightArrow))
@@ -130,12 +143,18 @@ public class RotatorManager : MonoBehaviour {
 		leftMovePressed = false;
 		doingHug = false;
 		OnStopHug ();
+		ColorBlock colors = moveLeft.colors;
+		colors.normalColor = normalColor;
+		moveLeft.colors = colors;
 	}
 	public void RightButtonPressedUp()
 	{
 		rightMovePressed = false;
 		doingHug = false;
 		OnStopHug ();
+		ColorBlock colors = moveRight.colors;
+		colors.normalColor = normalColor;
+		moveRight.colors = colors;
 	}
 	public void LeftButtonPressedDown()
 	{
@@ -147,6 +166,9 @@ public class RotatorManager : MonoBehaviour {
 				StartCoroutine ("DoublePressController");
 			}
 		}
+		ColorBlock colors = moveLeft.colors;
+		colors.normalColor = pressedColor;
+		moveLeft.colors = colors;
 	}
 	public void RightButtonPressedDown()
 	{
@@ -158,6 +180,9 @@ public class RotatorManager : MonoBehaviour {
 				StartCoroutine ("DoublePressController");
 			}
 		}
+		ColorBlock colors = moveRight.colors;
+		colors.normalColor = pressedColor;
+		moveRight.colors = colors;
 	}
 	public IEnumerator DoublePressController()
 	{

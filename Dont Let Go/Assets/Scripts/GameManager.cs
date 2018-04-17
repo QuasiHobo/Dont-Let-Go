@@ -112,8 +112,8 @@ public class GameManager : MonoBehaviour
 	private BloomOptimized myBloom;
 	float startBloomIntensity;
 	float startBloomThreshold;
-	float endBloomIntensity = 0.9f;
-	float endBloomThreshold = 0.65f;
+	float endBloomIntensity = 1.1f;
+	float endBloomThreshold = 0.55f;
 
 	//Touch UI stuff
 	public ParticleSystem rightButtonParticles;
@@ -138,6 +138,9 @@ public class GameManager : MonoBehaviour
 
 	public delegate void OnBoostEndsEvent();
 	public static event OnBoostEndsEvent OnBoostEnds;
+
+	public delegate void OnShowSimpleAdEvent();
+	public static event OnShowSimpleAdEvent OnShowSimpleAd;
 
 	//UI STUFF
 	public Button startButton;
@@ -167,6 +170,8 @@ public class GameManager : MonoBehaviour
 	public Text currentLevelText;
 	public Text currentLevelTextRun;
 	public Text scoreMultiplierText;
+
+	bool adIsShowing = false;
 
 	// Use this for initialization
 	void Start () 
@@ -239,6 +244,7 @@ public class GameManager : MonoBehaviour
 		ObstacleManager.OnSpecialStop += SpecialLevelStopped;
 		RotatorManager.OnHug += StartHug;
 		RotatorManager.OnStopHug += StopHug;
+		AdManager.OnAdEnded += AdEnded;
 
 		//Setup up UI for deathqoute
 		deathQuote.enabled = false;
@@ -256,6 +262,7 @@ public class GameManager : MonoBehaviour
 		ObstacleManager.OnSpecialStop -= SpecialLevelStopped;
 		RotatorManager.OnHug -= StartHug;
 		RotatorManager.OnStopHug -= StopHug;
+		AdManager.OnAdEnded -= AdEnded;
 	}
 	IEnumerator StartButtonFade()
 	{
@@ -328,7 +335,7 @@ public class GameManager : MonoBehaviour
 		{
 			if(t < 1)
 			{
-				t += Time.deltaTime / 2f;
+				t += Time.deltaTime / 1f;
 				myBloom.intensity = Mathf.Lerp(startBloomIntensity, endBloomIntensity, t);
 				myBloom.threshold = Mathf.Lerp(startBloomThreshold, endBloomThreshold, t);
 			}
@@ -338,8 +345,16 @@ public class GameManager : MonoBehaviour
 		float tempIntensity = myBloom.intensity;
 		while(t < 1 && !hugging)
 		{
-			t+= Time.deltaTime / 2.5f;
+			t += Time.deltaTime / 0.5f;
 			myBloom.intensity = Mathf.Lerp(tempIntensity, startBloomIntensity, t);
+//			myBloom.threshold = Mathf.Lerp(tempIntensity, startBloomThreshold, t);
+			yield return null;
+		}
+		t = 0;
+		while(t < 1 && !hugging)
+		{
+			t += Time.deltaTime / 0.5f;
+//			myBloom.intensity = Mathf.Lerp(tempIntensity, startBloomIntensity, t);
 			myBloom.threshold = Mathf.Lerp(tempIntensity, startBloomThreshold, t);
 			yield return null;
 		}
@@ -720,7 +735,20 @@ public class GameManager : MonoBehaviour
 ////		restartButton.gameObject.SetActive (true);
 //		yield return null;
 //		yield return new WaitForSeconds(0.1f);
+
+		OnShowSimpleAd();
+
+		adIsShowing = true;
+
+		while(adIsShowing)
+			yield return null;
+
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex);
+	}
+
+	void AdEnded()
+	{
+		adIsShowing = false;
 	}
 
 	public void RestartButtonPressed()
