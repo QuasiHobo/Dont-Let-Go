@@ -22,7 +22,7 @@ public class RotatorManager : MonoBehaviour {
 		}
 	}
 		
-	float touchSpeed = 20f; //16-18 for mobile builds
+	float touchSpeed = 17f; //16-18 for mobile builds
 
 	Rigidbody myRB;
 	bool leftMovePressed = false;
@@ -199,9 +199,16 @@ public class RotatorManager : MonoBehaviour {
 				if (hugbar_Right.fillAmount <= 0) {
 					doingHug = false;
 				}
+
+				hugbar_Left.color = hugBarColor_Collect;
+				hugbar_Right.color = hugBarColor_Collect;
+
 				yield return null;
 			}
 			OnStopHug ();
+			yield return new WaitForSeconds(0.05f);
+			hugbar_Left.color = hugBarColor_Start;
+			hugbar_Right.color = hugBarColor_Start;
 		}
 	}
 }

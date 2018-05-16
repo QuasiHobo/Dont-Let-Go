@@ -57,11 +57,13 @@
      <Compile Include="Assets\Scripts\CameraShake.cs" />
      <Compile Include="Assets\Scripts\CharCollison.cs" />
      <Compile Include="Assets\Scripts\CharController.cs" />
+     <Compile Include="Assets\Scripts\CharShakeScript.cs" />
      <Compile Include="Assets\Scripts\CollectableController.cs" />
      <Compile Include="Assets\Scripts\CollectDetector.cs" />
      <Compile Include="Assets\Scripts\DoubleTapObjectController.cs" />
      <Compile Include="Assets\Scripts\FallingEventScript.cs" />
      <Compile Include="Assets\Scripts\FloorCollison.cs" />
+     <Compile Include="Assets\Scripts\FPScounter.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\HeartIconController.cs" />
      <Compile Include="Assets\Scripts\KillParticleScript.cs" />

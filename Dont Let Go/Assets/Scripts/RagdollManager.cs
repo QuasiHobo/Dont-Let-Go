@@ -67,7 +67,7 @@ public class RagdollManager : MonoBehaviour {
 					go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
 			}
 			if(charNumb == "lol")
-				hips.GetComponent<Rigidbody> ().AddForce (transform.forward * -3333);
+				hips.GetComponent<Rigidbody> ().AddForce (transform.forward * -2250);
 		}
 		if (this.gameObject.tag == "Char2") 
 		{
@@ -84,7 +84,7 @@ public class RagdollManager : MonoBehaviour {
 					go.GetComponent<Rigidbody> ().AddForce (transform.up * colStrength);
 			}
 			if(charNumb == "lol")
-				hips.GetComponent<Rigidbody> ().AddForce (transform.forward * -3333);
+				hips.GetComponent<Rigidbody> ().AddForce (transform.forward * -2250);
 		}
 			
 	}

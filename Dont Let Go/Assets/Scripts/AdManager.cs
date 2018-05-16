@@ -30,7 +30,7 @@ public class AdManager : MonoBehaviour {
 
 	void SimpleAd()
 	{
-		StartCoroutine("ShowAdWhenReady");
+//		StartCoroutine("ShowAdWhenReady");
 	}
 
 	IEnumerator ShowAdWhenReady()
